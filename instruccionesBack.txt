@@ -1,4 +1,4 @@
-Activar entorno virtual --> source venv/bin/activate
+Guardar dependencias --> pip freeze > requirements.txt
 
 Activar docker --> sudo docker compose up -d 
 
@@ -7,3 +7,10 @@ sudo docker compose exec db bash
 psql -U mydatabaseuser -d mydatabase
 TODAS LAS TABLAS --> \dt
 UNA TABLA --> \d+ users O <tablaName>
+
+# django
+Crear super user --> python manage.py createsuperuser
+Activar entorno virtual --> source venv/bin/activate
+Correr proyecto --> python manage.py runserver
+Migraciones --> python manage.py makemigrations
+Migrar --> python manage.py migrate
