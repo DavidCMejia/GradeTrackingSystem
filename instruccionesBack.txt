@@ -1,0 +1,9 @@
+Activar entorno virtual --> source venv/bin/activate
+
+Activar docker --> sudo docker compose up -d 
+
+# Consola docker bd PGQL 
+sudo docker compose exec db bash
+psql -U mydatabaseuser -d mydatabase
+TODAS LAS TABLAS --> \dt
+UNA TABLA --> \d+ users O <tablaName>
