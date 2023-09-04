@@ -5,7 +5,7 @@ Activar BD docker --> sudo docker compose up -d
 # Consola docker bd PGQL 
 sudo docker compose exec db bash
 psql -U mydatabaseuser -d mydatabase
-TODAS LAS TABLAS --> psql -U mydatabaseuser -d mydatabase
+TODAS LAS TABLAS --> \dt
 UNA TABLA --> \d+ public.grades_grade
 
 # django
