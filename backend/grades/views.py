@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from .serializer import GradeSerializer, StudentSerializer, CourseSerializer, ProfessorSerializer
 from .models import Grade, Student, Course, Professor
 
@@ -13,6 +13,14 @@ class StudentView(viewsets.ModelViewSet):
 class CourseView(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['professor']
+
+    def get_queryset(self):
+        professor_id = self.kwargs.get('professor_id')
+        if professor_id:
+            return Course.objects.filter(professor=professor_id)
+        return Course.objects.all()
 
 class ProfessorView(viewsets.ModelViewSet):
     serializer_class = ProfessorSerializer

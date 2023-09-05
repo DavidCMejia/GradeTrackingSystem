@@ -11,5 +11,8 @@ router.register(r'professors', views.ProfessorView, 'professors')
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('docs/', include_docs_urls(title='Grades Tracking API'))
+    path('docs/', include_docs_urls(title='Grades Tracking API')),
+    path('api/courses/by_professor/<int:professor_id>/', 
+         views.CourseView.as_view({'get': 'list'}), 
+         name='course-list-by-professor'),
 ]
