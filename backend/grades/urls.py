@@ -7,8 +7,9 @@ router = routers.DefaultRouter()
 router.register(r'grades', views.GradeView, 'grades')
 router.register(r'courses', views.CourseView, 'courses') 
 router.register(r'students', views.StudentView, 'students')
+router.register(r'professors', views.ProfessorView, 'professors')
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('docs/', include_docs_urls(title='Grades School API'))
+    path('docs/', include_docs_urls(title='Grades Tracking API'))
 ]
