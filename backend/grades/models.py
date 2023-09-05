@@ -1,7 +1,6 @@
 from django.db import models
 import uuid
 
-# Create your models here.
 class TimestampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -15,6 +14,13 @@ class Student(TimestampedModel):
     password = models.CharField(max_length=100, blank=True, null=True)
     courses_enrolled = models.ManyToManyField('Course', blank=True, null=True)
 
+class Professor(TimestampedModel):
+    professor_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    professor_name = models.CharField(max_length=100)
+    identification_number = models.CharField(max_length=10, blank=True, null=True, unique=True)
+    email= models.EmailField(blank=True, null=True, unique=True)
+    password = models.CharField(max_length=100, blank=True, null=True)
+    
 class Course(TimestampedModel):
     course_name = models.CharField(max_length=100, blank=True, null=True)
     course_code = models.CharField(max_length=10, blank=True, null=True)
@@ -25,13 +31,6 @@ class Grade(TimestampedModel):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, default=1)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
     grade = models.IntegerField(default=1)
-
-class Professor(TimestampedModel):
-    professor_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    professor_name = models.CharField(max_length=100)
-    identification_number = models.CharField(max_length=10, blank=True, null=True, unique=True)
-    email= models.EmailField(blank=True, null=True, unique=True)
-    password = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.title
