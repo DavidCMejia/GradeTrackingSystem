@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters
-from ..serializer import GradeSerializer, StudentSerializer, CourseSerializer, ProfessorSerializer
-from ..models import Grade, Student, Course, Professor
+from .serializer import GradeSerializer, StudentSerializer, CourseSerializer, ProfessorSerializer
+from .models import Grade, Student, Course, Professor
 
 class GradeView(viewsets.ModelViewSet):
     serializer_class = GradeSerializer
