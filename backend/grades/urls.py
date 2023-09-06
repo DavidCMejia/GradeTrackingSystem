@@ -2,7 +2,6 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
 from .views import views as main_views
-from .views.loginviews import login, logout, callback, index
 
 router = routers.DefaultRouter()
 router.register(r'grades', main_views.GradeView, 'grades')
@@ -16,9 +15,5 @@ urlpatterns = [
     path('api/courses/by_professor/<int:professor_id>/', 
          main_views.CourseView.as_view({'get': 'list'}), 
          name='course-list-by-professor'),
-    path("", index, name="index"),
-    path("login", login, name="login"),
-    path("logout", logout, name="logout"),
-    path("callback", callback, name="callback"),
 ]
     
