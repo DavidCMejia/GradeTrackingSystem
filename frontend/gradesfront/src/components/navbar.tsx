@@ -21,6 +21,7 @@ import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
   const { user } = useUser();
+  console.log('🚀 ~ user:', user);
   const [handleOpenNavMenu, setHandleOpenNavMenu] = useState<null | HTMLElement>(null);
   const [handleOpenUserMenu, setHandleOpenUserMenu] = useState<null | HTMLElement>(null);
   const pages = ['Dashboard', 'Profile', 'Blog'];
@@ -146,22 +147,23 @@ export default function Navbar() {
               open={Boolean(handleOpenUserMenu)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem>
-                <Typography textAlign="center">
-                  <Link className={styles.linkNoStyle} href="/">Account</Link>
-
-                </Typography>
-              </MenuItem>
-              <MenuItem>
-                <Typography textAlign="center">
-                  <Link
-                    href={user ? '/api/auth/logout' : '/api/auth/login'}
-                    className={styles.linkNoStyle}
-                  >
+              <Link className={styles.linkNoStyle} href="/">
+                <MenuItem>
+                  <Typography textAlign="center">
+                    Account
+                  </Typography>
+                </MenuItem>
+              </Link>
+              <Link
+                href={user ? '/api/auth/logout' : '/api/auth/login'}
+                className={styles.linkNoStyle}
+              >
+                <MenuItem>
+                  <Typography textAlign="center">
                     {user ? 'Logout' : 'Login'}
-                  </Link>
-                </Typography>
-              </MenuItem>
+                  </Typography>
+                </MenuItem>
+              </Link>
 
             </Menu>
           </Box>

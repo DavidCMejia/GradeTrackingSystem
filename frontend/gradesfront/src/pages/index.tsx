@@ -13,9 +13,9 @@ export default function Home() {
       {user ? (
         user.name && <WelcomeMessage userName={user.name} />
       ) : (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Typography variant="h3">Welcome to Grade-App!</Typography>
-          <Typography>
+        <>
+          <Typography variant="h3" textAlign="center">Welcome to Grade-App!</Typography>
+          <Typography textAlign="center">
             In order to use our system, we invite you to log in at the top right corner.
             If you're a dev,
             {' '}
@@ -23,7 +23,7 @@ export default function Home() {
             {' '}
             you can find the API Docs.
           </Typography>
-        </div>
+        </>
       )}
     </>
   );
