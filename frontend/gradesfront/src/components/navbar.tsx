@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import AdbIcon from '@mui/icons-material/Adb';
+import SchoolIcon from '@mui/icons-material/School';
 
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
@@ -20,27 +20,25 @@ import Link from 'next/link';
 import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
-  const { user, error, isLoading } = useUser();
+  const { user } = useUser();
   const [handleOpenNavMenu, setHandleOpenNavMenu] = useState<null | HTMLElement>(null);
   const [handleOpenUserMenu, setHandleOpenUserMenu] = useState<null | HTMLElement>(null);
-  const pages = ['Products', 'Pricing', 'Blog'];
-  const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+  const pages = ['Dashboard', 'Profile', 'Blog'];
+  const pageLinks = ['/dashboard', '/profile', '/blog'];
 
   const handleCloseUserMenu = () => {
     setHandleOpenUserMenu(null);
   };
 
-  console.log('🚀 ~ user:', user);
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <SchoolIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -51,7 +49,7 @@ export default function Navbar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            GRADE-APP
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -83,14 +81,18 @@ export default function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {pages.map((page, index) => (
                 <MenuItem key={page} onClick={() => setHandleOpenNavMenu(null)}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center">
+                    <Link href={pageLinks[index]} passHref className={styles.linkNoStyle}>
+                      {page}
+                    </Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <SchoolIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -110,21 +112,22 @@ export default function Navbar() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={() => setHandleOpenNavMenu(null)}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
+            {pages.map((page, index) => (
+              <Link key={page} href={pageLinks[index]} passHref className={styles.linkNoStyle}>
+                <Button
+                  onClick={() => setHandleOpenNavMenu(null)}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  {page}
+                </Button>
+              </Link>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={(e) => setHandleOpenUserMenu(e.currentTarget)} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar src={user?.picture || '/broken-image.jpg'} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -145,11 +148,17 @@ export default function Navbar() {
             >
               <MenuItem>
                 <Typography textAlign="center">
+                  <Link className={styles.linkNoStyle} href="/">Account</Link>
+
+                </Typography>
+              </MenuItem>
+              <MenuItem>
+                <Typography textAlign="center">
                   <Link
-                    href="/api/auth/login"
+                    href={user ? '/api/auth/logout' : '/api/auth/login'}
                     className={styles.linkNoStyle}
                   >
-                    Login
+                    {user ? 'Logout' : 'Login'}
                   </Link>
                 </Typography>
               </MenuItem>
