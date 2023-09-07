@@ -10,12 +10,12 @@ class TimestampedModel(models.Model):
         abstract = True
 
 class Student(TimestampedModel):
-    student_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True) #AGREGAR PK
+    student_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     student_name = models.CharField(max_length=100, blank=True, null=True)
     identification_number = models.CharField(max_length=10, blank=True, null=True, unique=True)
     email = models.EmailField(blank=True, null=True, unique=True)
     password = models.CharField(max_length=100, blank=True, null=True)
-    courses_enrolled = models.ManyToManyField('Course', blank=True, null=True)
+    courses_enrolled = models.ManyToManyField('Course', blank=True)
     class Meta:
         verbose_name = 'student'
         verbose_name_plural = 'students'
@@ -34,7 +34,7 @@ class Course(TimestampedModel):
     course_code = models.CharField(max_length=10, blank=True, null=True)
     course_name = models.CharField(max_length=100, blank=True, null=True)
     professor = models.ForeignKey('Professor', on_delete=models.SET_NULL, null=True, blank=True)
-    students = models.ManyToManyField('Student', blank=True, null=True)
+    students = models.ManyToManyField('Student', blank=True)
     class Meta:
         verbose_name = 'course'
         verbose_name_plural = 'courses'
