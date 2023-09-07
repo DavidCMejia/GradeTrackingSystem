@@ -1,8 +1,6 @@
 from django.db import models
 import uuid
 
-#TODO Register y login
-
 class TimestampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -29,6 +27,7 @@ class Professor(TimestampedModel):
     class Meta:
         verbose_name = 'professor'
         verbose_name_plural = 'professors'
+
 class Course(TimestampedModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     course_code = models.CharField(max_length=10, blank=True, null=True)
