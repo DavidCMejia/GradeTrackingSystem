@@ -1,3 +1,83 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true
+  },
+  "extends": [
+      "plugin:react/recommended",
+      "plugin:jsx-a11y/recommended",
+      "airbnb",
+      "plugin:import/typescript",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "next"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+      "ecmaFeatures": {
+          "jsx": true
+      },
+      "ecmaVersion": 12,
+      "sourceType": "module"
+  },
+  "plugins": [
+      "react",
+      "promise",
+      "import",
+      "prettier",
+      "@typescript-eslint"
+  ],
+  "rules": {
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-props-no-spreading": "off",
+      "react/jsx-filename-extension": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "react/prop-types": "off",
+      "react/require-default-props": "off",
+      "promise/always-return": "error",
+      "promise/no-return-wrap": "error",
+      "promise/param-names": "error",
+      "promise/catch-or-return": "error",
+      "promise/no-native": "off",
+      "promise/no-nesting": "error",
+      "promise/no-promise-in-callback": "error",
+      "promise/no-callback-in-promise": "error",
+      "promise/no-return-in-finally": "error",
+      "prefer-arrow-callback": "error",
+      "import/no-named-as-default": "off",
+      "import/no-unresolved": [2, { "ignore": ["pdfmake/*", "esri/*"] }],
+      "import/extensions": "off",
+      "no-console": "error",
+      "@typescript-eslint/no-use-before-define": ["error"],
+      "@typescript-eslint/no-unused-vars": ["error"],
+      "react/function-component-definition": "off",
+      "prettier/prettier": [
+        "off",
+        {
+          "endOfLine": "auto"
+        },
+        {
+          "usePrettierrc": true
+        }
+      ]
+  },
+  "globals": {
+    "React": "writable",
+    "FormData": "writable",
+    "File": "writable"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ],
+        "moduleDirectory": ["node_modules"]
+      }
+    }
+  }
 }
