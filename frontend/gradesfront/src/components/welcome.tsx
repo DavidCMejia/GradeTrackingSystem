@@ -6,29 +6,19 @@ type WelcomeMessageProps = {
 }
 
 const WelcomeMessage: FC<WelcomeMessageProps> = ({ userName }) => (
-  <Typography
-    sx={{
-      mr: 2,
-      fontFamily: 'monospace',
-      fontWeight: 700,
-      letterSpacing: '.3rem',
-      color: 'inherit',
-      textDecoration: 'none',
-    }}
-  >
-    <div style={{ textAlign: 'center', padding: '20px' }}>
 
-      <h1>
-        Welcome,
-        {' '}
-        {userName}
-        {' '}
-        !
-      </h1>
-      <p>Thank you for signing in to our application!</p>
-
-    </div>
-  </Typography>
+  <div style={{ textAlign: 'center', padding: '20px' }}>
+    <Typography variant="h3">
+      Welcome
+      {' '}
+      {userName}
+      {' '}
+      !
+    </Typography>
+    <Typography>
+      Thank you for signing in to our application!
+    </Typography>
+  </div>
 );
 
 export default WelcomeMessage;
