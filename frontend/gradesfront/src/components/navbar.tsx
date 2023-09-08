@@ -21,7 +21,6 @@ import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
   const { user } = useUser();
-  console.log('🚀 ~ user:', user);
   const [handleOpenNavMenu, setHandleOpenNavMenu] = useState<null | HTMLElement>(null);
   const [handleOpenUserMenu, setHandleOpenUserMenu] = useState<null | HTMLElement>(null);
   const pages = ['Dashboard', 'Profile', 'Blog'];

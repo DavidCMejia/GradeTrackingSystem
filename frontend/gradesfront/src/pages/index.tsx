@@ -14,9 +14,10 @@ export default function Home() {
         user.name && <WelcomeMessage userName={user.name} />
       ) : (
         <>
-          <Typography variant="h3" textAlign="center">Welcome to Grade-App!</Typography>
+          <Typography variant="h3" textAlign="center">Welcome to Grade Tracking System App!</Typography>
           <Typography textAlign="center">
             In order to use our system, we invite you to log in at the top right corner.
+            <br />
             If you're a dev,
             {' '}
             <Link href={`${URL_BACKEND}/docs`}>here</Link>
