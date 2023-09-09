@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-/* eslint-disable react/no-unescaped-entities */
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 import {
@@ -11,7 +10,6 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import WelcomeMessage from '../components/welcome';
-
 import { URL_BACKEND } from '../constants';
 
 export default function Home() {
@@ -54,7 +52,7 @@ export default function Home() {
           <Typography textAlign="center">
             In order to use our system, we invite you to log in at the top right corner.
             <br />
-            If you're a dev,
+            If you are a dev,
             {' '}
             <Link href={`${URL_BACKEND}/docs`}>here</Link>
             {' '}

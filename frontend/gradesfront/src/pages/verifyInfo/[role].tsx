@@ -12,13 +12,13 @@ import axios from 'axios';
 import { first, isEmpty } from 'lodash';
 import { URL_BACKEND, roles } from '../../constants';
 import { parseError } from '../../utils';
-import type { Professor } from '../../types';
+import type { Professor, Student } from '../../types';
 
 const VerifyInfo: NextPage = () => {
   const { query } = useRouter();
   const { user } = useUser();
   const [dataCheckedAlready, setDataCheckedAlready] = useState<boolean>(false);
-  const [userData, setUserData] = useState<Professor | any>(); // o student
+  const [userData, setUserData] = useState<Professor | Student>();
   const [userRole, setUserRole] = useState<string>('');
   const [form] = Form.useForm();
 
@@ -57,7 +57,7 @@ const VerifyInfo: NextPage = () => {
   useEffect(() => {
     form.setFieldsValue({
       email: user?.email,
-      professor_name: user?.name,
+      name: user?.name,
       role: query.role,
     });
   }, [user, query]);
@@ -99,7 +99,7 @@ const VerifyInfo: NextPage = () => {
           <Divider />
           <Form.Item
             label="Name"
-            name="professor_name"
+            name="name"
             rules={[{ required: true }]}
           >
             <Input />
