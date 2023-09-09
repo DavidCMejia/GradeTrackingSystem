@@ -7,6 +7,7 @@ type WelcomeMessageProps = {
 
 const WelcomeMessage: FC<WelcomeMessageProps> = ({ userName }) => (
   <>
+    <br />
     <Typography variant="h3" textAlign="center">
       Welcome
       {' '}
@@ -14,6 +15,7 @@ const WelcomeMessage: FC<WelcomeMessageProps> = ({ userName }) => (
       {' '}
       !
     </Typography>
+    <br />
     <Typography textAlign="center">
       Thank you for signing in to our application!
     </Typography>

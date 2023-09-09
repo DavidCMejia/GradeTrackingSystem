@@ -34,7 +34,9 @@ export default function Navbar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <SchoolIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Link href="/" className={styles.linkNoStyle}>
+            <SchoolIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          </Link>
           <Typography
             variant="h6"
             noWrap

@@ -1,2 +1,5 @@
 export const URL_BACKEND = 'http://localhost:8000/grades';
-export const v = 'v1';
+export const roles = {
+  1: 'Professor',
+  2: 'Student',
+};
