@@ -6,24 +6,23 @@ class TimestampedModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         abstract = True
-
-class Student(TimestampedModel):
-    student_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    student_name = models.CharField(max_length=100, blank=True, null=True)
+class MainInfoModel(models.Model):    
+    name = models.CharField(max_length=100, blank=True, null=True)
     identification_number = models.CharField(max_length=10, blank=True, null=True, unique=True)
     role = models.CharField(max_length=10, blank=True, null=True)
     email = models.EmailField(blank=True, null=True, unique=True)
+    class Meta:
+        abstract = True
+
+class Student(TimestampedModel, MainInfoModel):
+    student_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     courses_enrolled = models.ManyToManyField('Course', blank=True)
     class Meta:
         verbose_name = 'student'
         verbose_name_plural = 'students'
 
-class Professor(TimestampedModel):
+class Professor(TimestampedModel, MainInfoModel):
     professor_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    professor_name = models.CharField(max_length=100)
-    identification_number = models.CharField(max_length=10, blank=True, null=True, unique=True)
-    role = models.CharField(max_length=10, blank=True, null=True)
-    email= models.EmailField(blank=True, null=True, unique=True)
     class Meta:
         verbose_name = 'professor'
         verbose_name_plural = 'professors'

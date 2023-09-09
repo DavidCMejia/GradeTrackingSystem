@@ -10,7 +10,7 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { first, isEmpty } from 'lodash';
-import { URL_BACKEND } from '../../constants';
+import { URL_BACKEND, roles } from '../../constants';
 import { parseError } from '../../utils';
 import type { Professor } from '../../types';
 
@@ -18,16 +18,17 @@ const VerifyInfo: NextPage = () => {
   const { query } = useRouter();
   const { user } = useUser();
   const [dataCheckedAlready, setDataCheckedAlready] = useState<boolean>(false);
-  const [data, setData] = useState<Professor>();
+  const [userData, setUserData] = useState<Professor | any>(); // o student
+  const [userRole, setUserRole] = useState<string>('');
   const [form] = Form.useForm();
 
   const handleSubmit = async (values: Professor) => {
     try {
-      if (!dataCheckedAlready && data) {
-        const res = await axios.put(`${URL_BACKEND}/api/professors/${data?.id}/`, values);
-        if (res && res.status === 201) message.success('Successfully updated');
+      if (!dataCheckedAlready && userData && userRole) {
+        const res = await axios.put(`${URL_BACKEND}/api/${userRole}/${userData?.id}/`, values);
+        if (res && res.status === 201) message.success('Information verified successfully');
       } else {
-        const res = await axios.post(`${URL_BACKEND}/api/professors/`, values);
+        const res = await axios.post(`${URL_BACKEND}/api/${userRole}/`, values);
         if (res && res.status === 201) message.success('Information verified successfully');
       }
     } catch (error) {
@@ -38,18 +39,20 @@ const VerifyInfo: NextPage = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      axios.get(`${URL_BACKEND}/api/professors/by_email/${user.email}/`)
+    if (user && query) {
+      const rol = roles[Number(query.role)];
+      setUserRole(rol);
+      axios.get(`${URL_BACKEND}/api/${rol}/by_email/${user.email}/`)
         .then((res) => {
           if (!isEmpty(res.data)) {
             setDataCheckedAlready(true);
-            setData(first(res.data));
+            setUserData(first(res.data));
           }
           return null;
         })
         .catch((e) => message.error(e));
     }
-  }, [user]);
+  }, [user, query]);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -60,7 +63,6 @@ const VerifyInfo: NextPage = () => {
   }, [user, query]);
 
   return (
-
     <>
       <br />
       <br />
@@ -126,11 +128,8 @@ const VerifyInfo: NextPage = () => {
           </Form.Item>
         </Form>
         )}
-
       </Container>
-
     </>
-
   );
 };
 

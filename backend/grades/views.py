@@ -25,3 +25,9 @@ class CourseView(viewsets.ModelViewSet):
 class ProfessorView(viewsets.ModelViewSet):
     serializer_class = ProfessorSerializer
     queryset = Professor.objects.all()
+
+    def get_queryset(self):
+        email = self.kwargs.get('email')
+        if email:
+            return Professor.objects.filter(email=email)
+        return Professor.objects.all()

@@ -1,5 +1,5 @@
 export const URL_BACKEND = 'http://localhost:8000/grades';
-export const roles = {
-  1: 'Professor',
-  2: 'Student',
+export const roles: { [key: number]: string } = {
+  1: 'professors',
+  2: 'students',
 };
