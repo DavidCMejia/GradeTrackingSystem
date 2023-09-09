@@ -7,36 +7,54 @@ import {
   Form, Input, Button, message, Divider,
 } from 'antd';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { first, isEmpty } from 'lodash';
 import { URL_BACKEND } from '../../constants';
+import { parseError } from '../../utils';
+import type { Professor } from '../../types';
 
 const VerifyInfo: NextPage = () => {
   const { query } = useRouter();
   const { user } = useUser();
-  console.log('🚀 ~ Role que llega  :', query.role);
-
+  const [dataCheckedAlready, setDataCheckedAlready] = useState<boolean>(false);
+  const [data, setData] = useState<Professor>();
   const [form] = Form.useForm();
-  const handleSubmit = async (values: any) => {
-    try {
-      const res = await axios.get('http://localhost:8000/grades/api/professors/');
-      console.log('🚀 ~ res:', res);
-      if (res && res.status === 200) message.success('Registro creado con exito');
-    } catch (error) {
-      console.log(error);
-      // message.error({
-      //   content: `Error al guardar el registro: ${error}`,
-      //   duration: 5,
-      // });
-    }
 
-    // form.resetFields();
+  const handleSubmit = async (values: Professor) => {
+    try {
+      if (!dataCheckedAlready && data) {
+        const res = await axios.put(`${URL_BACKEND}/api/professors/${data?.id}/`, values);
+        if (res && res.status === 201) message.success('Successfully updated');
+      } else {
+        const res = await axios.post(`${URL_BACKEND}/api/professors/`, values);
+        if (res && res.status === 201) message.success('Information verified successfully');
+      }
+    } catch (error) {
+      const parsedError = parseError(error);
+      message.error(parsedError);
+    }
+    form.resetFields();
   };
+
+  useEffect(() => {
+    if (user) {
+      axios.get(`${URL_BACKEND}/api/professors/by_email/${user.email}/`)
+        .then((res) => {
+          if (!isEmpty(res.data)) {
+            setDataCheckedAlready(true);
+            setData(first(res.data));
+          }
+          return null;
+        })
+        .catch((e) => message.error(e));
+    }
+  }, [user]);
 
   useEffect(() => {
     form.setFieldsValue({
       email: user?.email,
-      professorName: user?.name,
+      professor_name: user?.name,
       role: query.role,
     });
   }, [user, query]);
@@ -48,9 +66,20 @@ const VerifyInfo: NextPage = () => {
       <br />
       <br />
       <Container fixed maxWidth="sm" sx={{ border: '1px solid #ccc', borderRadius: '25px' }}>
+        {dataCheckedAlready && (
+          <Typography variant="h4" textAlign="center">
+            Your information has been already confirmed. Would you like to do it again?
+            <br />
+            <Button type="dashed" onClick={() => setDataCheckedAlready(false)}>Yes</Button>
+            {' '}
+            <Button type="dashed" href="/dashboard">No</Button>
+          </Typography>
+
+        )}
+        {!dataCheckedAlready && (
         <Form
           form={form}
-        // validateMessages={validateMessages}
+          // validateMessages={validateMessages}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 12 }}
@@ -68,7 +97,7 @@ const VerifyInfo: NextPage = () => {
           <Divider />
           <Form.Item
             label="Name"
-            name="professorName"
+            name="professor_name"
             rules={[{ required: true }]}
           >
             <Input />
@@ -76,7 +105,7 @@ const VerifyInfo: NextPage = () => {
 
           <Form.Item
             label="Identification Number"
-            name="identificationNumber"
+            name="identification_number"
             rules={[{ required: true }]}
           >
             <Input />
@@ -96,11 +125,11 @@ const VerifyInfo: NextPage = () => {
             </Button>
           </Form.Item>
         </Form>
+        )}
+
       </Container>
 
     </>
-
-  // <Box sx={{ bgcolor: '#cfe8fc', height: '100vh' }} />
 
   );
 };

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import {
   AppBar,
   Box,
@@ -86,7 +87,7 @@ export default function Navbar() {
               {pages.map((page, index) => (
                 <MenuItem key={page} onClick={() => setHandleOpenNavMenu(null)}>
                   <Typography textAlign="center">
-                    <Link href={pageLinks[index]} passHref className={styles.linkNoStyle}>
+                    <Link href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
                       {page}
                     </Link>
                   </Typography>
@@ -115,7 +116,7 @@ export default function Navbar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page, index) => (
-              <Link key={page} href={pageLinks[index]} passHref className={styles.linkNoStyle}>
+              <Link key={page} href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
                 <Button
                   onClick={() => setHandleOpenNavMenu(null)}
                   sx={{ my: 2, color: 'white', display: 'block' }}
@@ -148,7 +149,7 @@ export default function Navbar() {
               open={Boolean(handleOpenUserMenu)}
               onClose={handleCloseUserMenu}
             >
-              <Link className={styles.linkNoStyle} href="/">
+              <Link className={styles.linkNoStyle} href="" as="/account">
                 <MenuItem>
                   <Typography textAlign="center">
                     Account
