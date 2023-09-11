@@ -1,9 +1,9 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-// import userReducer from "./slices/userSlice";
 import storage from 'redux-persist/lib/storage';
-import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { persistReducer, persistStore } from 'redux-persist';
 import counterReducer from './slices/counterSlice';
+import userReducer from './slices/userSlice';
 
 const persistConfig = {
   key: 'root',
@@ -12,6 +12,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   counter: counterReducer,
+  user: userReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

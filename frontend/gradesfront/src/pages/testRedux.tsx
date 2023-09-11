@@ -3,7 +3,7 @@ import {
 } from 'antd';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCounter } from '../selectors/initialSelectors';
+import { selectCounter } from '../selectors/mainSelectors';
 import { decrement, increment } from '../slices/counterSlice';
 
 export default function Home() {

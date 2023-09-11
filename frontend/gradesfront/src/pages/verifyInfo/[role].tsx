@@ -50,7 +50,7 @@ const VerifyInfo: NextPage = () => {
           }
           return null;
         })
-        .catch((e) => message.error(e));
+        .catch((e) => message.error(e.toString()));
     }
   }, [user, query]);
 

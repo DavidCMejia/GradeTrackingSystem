@@ -9,11 +9,14 @@ import {
   CardContent,
 } from '@mui/material';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import WelcomeMessage from '../components/welcome';
 import { URL_BACKEND } from '../constants';
+import { setUser } from '../slices/userSlice';
 
 export default function Home() {
   const { user } = useUser();
+  const dispatch = useDispatch();
   const [role, setRole] = useState<number>(0);
 
   const card = (
@@ -27,8 +30,47 @@ export default function Home() {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="large" onClick={() => setRole(1)} href={`verifyInfo/${role}`}>Professor</Button>
-        <Button size="large" onClick={() => setRole(2)} href={`verifyInfo/${role}`}>Student</Button>
+        <Button
+          size="large"
+          onClick={
+          () => {
+            setRole(1);
+            dispatch(
+              setUser(
+                {
+                  identification_number: '',
+                  name: '',
+                  role: '1',
+                  email: '',
+                },
+              ),
+            );
+          }
+        }
+          href={`verifyInfo/${role}`}
+        >
+          Professor
+        </Button>
+        <Button
+          size="large"
+          onClick={
+          () => {
+            setRole(2);
+            dispatch(
+              setUser(
+                {
+                  identification_number: '',
+                  name: '',
+                  role: '2',
+                  email: '',
+                },
+              ),
+            );
+          }}
+          href={`verifyInfo/${role}`}
+        >
+          Student
+        </Button>
       </CardActions>
     </>
   );
