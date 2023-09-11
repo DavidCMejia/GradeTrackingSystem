@@ -2,8 +2,8 @@ import type { AppProps } from 'next/app';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import Navbar from '../components/navbar';
 import { persistor, store } from '../store';
+import Navbar from '../components/navbar';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

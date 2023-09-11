@@ -10,9 +10,11 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { first, isEmpty } from 'lodash';
+import { useDispatch } from 'react-redux';
 import { URL_BACKEND, roles } from '../../constants';
 import { parseError } from '../../utils';
 import type { Professor, Student } from '../../types';
+import { setUser } from '../../slices/userSlice';
 
 const VerifyInfo: NextPage = () => {
   const { query } = useRouter();
@@ -21,6 +23,7 @@ const VerifyInfo: NextPage = () => {
   const [userData, setUserData] = useState<Professor | Student>();
   const [userRole, setUserRole] = useState<string>('');
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (values: Professor) => {
     try {
@@ -39,7 +42,7 @@ const VerifyInfo: NextPage = () => {
   };
 
   useEffect(() => {
-    if (user && query) {
+    if (user && query.role) {
       const rol = roles[Number(query.role)];
       setUserRole(rol);
       axios.get(`${URL_BACKEND}/api/${rol}/by_email/${user.email}/`)
@@ -61,6 +64,23 @@ const VerifyInfo: NextPage = () => {
       role: query.role,
     });
   }, [user, query]);
+
+  useEffect(() => {
+    if (userData) {
+      const {
+        id, name, email, role,
+      } = userData;
+
+      dispatch(
+        setUser({
+          id,
+          name,
+          email,
+          role,
+        } as Professor | Student),
+      );
+    }
+  }, [userData]);
 
   return (
     <>

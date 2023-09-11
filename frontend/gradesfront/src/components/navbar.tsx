@@ -18,10 +18,14 @@ import SchoolIcon from '@mui/icons-material/School';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
 import styles from '../styles/navbar.module.css';
+import { setUser } from '../slices/userSlice';
+import { emptyUserInfo } from '../constants';
 
 export default function Navbar() {
   const { user } = useUser();
+  const dispatch = useDispatch();
   const [handleOpenNavMenu, setHandleOpenNavMenu] = useState<null | HTMLElement>(null);
   const [handleOpenUserMenu, setHandleOpenUserMenu] = useState<null | HTMLElement>(null);
   const pages = ['Dashboard', 'Profile', 'Blog'];
@@ -158,6 +162,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href={user ? '/api/auth/logout' : '/api/auth/login'}
+                onClick={() => user && dispatch(setUser(emptyUserInfo))}
                 className={styles.linkNoStyle}
               >
                 <MenuItem>
