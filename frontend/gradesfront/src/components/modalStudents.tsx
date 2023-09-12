@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Collection, find, isEmpty } from 'lodash';
-import { Student } from '../types';
+import type { Student } from '../types';
 
 type StudentModalProps = {
     handleOpen: boolean,

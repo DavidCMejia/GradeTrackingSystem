@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { Professor, Student } from '../types';
+import type { Professor, Student } from '../types';
 
 type UserState = Professor | Student;
 

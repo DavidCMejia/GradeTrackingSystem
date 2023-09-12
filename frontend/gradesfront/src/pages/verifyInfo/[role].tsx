@@ -1,20 +1,27 @@
 /* eslint-disable camelcase */
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
+
 import {
   Container, Typography,
 } from '@mui/material';
+
 import {
   Form, Input, Button, message, Divider,
 } from 'antd';
+
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
+
 import axios from 'axios';
+
 import { first, isEmpty } from 'lodash';
+
 import { useDispatch } from 'react-redux';
+import type { Professor, Student } from '../../types';
+
 import { URL_BACKEND, roles } from '../../constants';
 import { parseError } from '../../utils';
-import type { Professor, Student } from '../../types';
 import { setUser } from '../../slices/userSlice';
 
 const VerifyInfo: NextPage = () => {

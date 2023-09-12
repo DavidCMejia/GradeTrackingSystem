@@ -12,27 +12,35 @@ import {
   CircularProgress,
   TextField,
 } from '@mui/material';
+
 import { message } from 'antd';
+
 import {
   Collection,
+  find,
   isEmpty,
   map,
   orderBy,
 } from 'lodash';
+
 import { CSSProperties, useEffect, useState } from 'react';
 import axios from 'axios';
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Add from '@mui/icons-material/Add';
+
 import { useRouter } from 'next/router';
 import { URL_BACKEND } from '../../../constants';
-import { Course, Student } from '../../../types';
+import type { Course, Professor, Student } from '../../../types';
+
 import ModalStudents from '../../../components/modalStudents';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
   const [studentsList, setStudentsList] = useState<Collection<Student[]>>();
+  const [professorsList, setProfessorsList] = useState<Collection<Professor[]>>();
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
@@ -63,7 +71,7 @@ const Courses: NextPage = () => {
       .catch((e) => message.error(e.toString()));
   };
 
-  const fetchStudents = () => {
+  const fetchStudents = () => { // TODO: Pasar a redux en /dashboard si se vuelve a repetir
     axios.get(`${URL_BACKEND}/api/students/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
@@ -74,9 +82,21 @@ const Courses: NextPage = () => {
       .catch((e) => message.error(e.toString()));
   };
 
+  const fetchProfessors = () => { // TODO: Pasar a redux en /dashboard si se vuelve a repetir
+    axios.get(`${URL_BACKEND}/api/professors/`)
+      .then((res) => {
+        if (!isEmpty(res.data)) {
+          setProfessorsList(res.data);
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
   useEffect(() => {
     fetchCourses();
     fetchStudents();
+    fetchProfessors();
   }, []);
 
   if (isEmpty(coursesData)) {
@@ -145,7 +165,13 @@ const Courses: NextPage = () => {
                 <TableCell style={centerRowStyle}>{course.course_code}</TableCell>
                 {/* <TableCell style={centerRowStyle}>{course.id}</TableCell> */}
                 <TableCell style={centerRowStyle}>{course.course_name.toUpperCase()}</TableCell>
-                <TableCell style={centerRowStyle}>{course.professor}</TableCell>
+                <TableCell style={centerRowStyle}>
+                  {professorsList
+                  && find(
+                    professorsList,
+                    { id: course.professor },
+                  )?.name}
+                </TableCell>
                 <TableCell style={centerRowStyle}>
                   <Button onClick={() => viewStudents(course.students)}><VisibilityIcon /></Button>
                 </TableCell>

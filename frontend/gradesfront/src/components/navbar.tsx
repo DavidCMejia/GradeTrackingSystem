@@ -17,11 +17,14 @@ import SchoolIcon from '@mui/icons-material/School';
 
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
-import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import styles from '../styles/navbar.module.css';
+
+import Link from 'next/link';
+
 import { setUser } from '../slices/userSlice';
 import { emptyUserInfo } from '../constants';
+
+import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
   const { user } = useUser();
