@@ -1,13 +1,20 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable camelcase */
 import {
-  Form, Input, Modal, Select,
+  Alert,
+  Form,
+  Input,
+  Modal,
+  Select,
 } from 'antd';
-import { FC, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { FC, useEffect, useState } from 'react';
 import {
   Collection, flatten, map,
 } from 'lodash';
+import axios from 'axios';
 import type { Course, Professor, Student } from '../types';
+import { URL_BACKEND } from '../constants';
 
 type EditCourseModalProps = {
     handleOpen: boolean,
@@ -26,8 +33,12 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
   course,
 }) => {
   const [modalForm] = Form.useForm();
+  const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
+  const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
+  const [errorResponse, setErrorResponse] = useState <string>('');
   const flatProfessorsList: Professor[] = flatten(professorsList as any);
   const flatStudentsList: Student[] = flatten(studentsList as any);
+  const { reload } = useRouter();
 
   const filterProfessors = (input: string, option: any) => {
     const { label } = option;
@@ -38,8 +49,24 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
     return label.toLowerCase().includes(input.toLowerCase());
   };
 
-  const onFinish = () => {
-    console.log('Editando curso', modalForm.getFieldsValue());
+  const onFinish = async () => {
+    const values = modalForm.getFieldsValue();
+    try {
+      const res = await axios.put(`${URL_BACKEND}/api/courses/${values.id}/`, values);
+      if (res && res.status === 200) {
+        setShowSucessResponse(true);
+        setTimeout(() => {
+          setShowSucessResponse(false);
+          reload();
+        }, 3000);
+      }
+    } catch (error: any) {
+      setErrorResponse(error.message);
+      setShowFailureResponse(true);
+      setTimeout(() => {
+        setShowFailureResponse(false);
+      }, 4000);
+    }
   };
 
   useEffect(() => {
@@ -67,6 +94,28 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
         onCancel={handleCancel}
         onOk={modalForm.submit}
       >
+        {showSucessResponse && (
+        <>
+          <Alert
+            message="Course Updated"
+            description={`${course.course_name.toUpperCase()} successfully updated`}
+            type="success"
+            showIcon
+          />
+          <br />
+        </>
+        )}
+        {showFailureResponse && (
+        <>
+          <Alert
+            message="Course Not Updated"
+            description={`There was an error updating ${course.course_name.toUpperCase()}, error: ${errorResponse}`}
+            type="error"
+            showIcon
+          />
+          <br />
+        </>
+        )}
         <Form
           form={modalForm}
           labelCol={{ span: 8 }}
@@ -76,7 +125,6 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
           <Item label="id" name="id" hidden>
             <Input />
           </Item>
-
           <Item label="Code" name="course_code">
             <Input />
           </Item>
@@ -111,7 +159,6 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
               }))}
             />
           </Item>
-
         </Form>
       </Modal>
       )}
