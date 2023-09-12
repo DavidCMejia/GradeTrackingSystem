@@ -32,10 +32,9 @@ import ModalStudents from '../../../components/modalStudents';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
-  const sortedCoursesData = orderBy(coursesData, 'course_code', 'asc');
+  const [studentsList, setStudentsList] = useState<Collection<Student[]>>();
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
-  const [studentsList, setStudentsList] = useState<Collection<Student[]>>();
   const [searchText, setSearchText] = useState<string>('');
 
   const { push, asPath } = useRouter();
@@ -89,11 +88,13 @@ const Courses: NextPage = () => {
     );
   }
 
-  const filteredData:Course[] = sortedCoursesData.filter(
-    (course) => course.course_name.toLowerCase().includes(searchText.toLowerCase())
+  const sortedCoursesData = orderBy(coursesData, 'course_code', 'asc');
+  const filteredData:Course[] = sortedCoursesData
+    .filter(
+      (course) => course.course_name.toLowerCase().includes(searchText.toLowerCase())
   || course.course_code.toLowerCase().includes(searchText.toLowerCase())
   || course.professor.toString().toLowerCase().includes(searchText.toLowerCase()),
-  );
+    );
 
   const rowTitleStyle: CSSProperties = {
     textAlign: 'center',
@@ -102,8 +103,8 @@ const Courses: NextPage = () => {
   const centerRowStyle: CSSProperties = {
     textAlign: 'center',
   };
-  return (
 
+  return (
     <>
       <Typography variant="h4" align="center" gutterBottom>
         Courses
