@@ -7,7 +7,6 @@ import {
   Modal,
   Select,
 } from 'antd';
-import { useRouter } from 'next/router';
 import { FC, useEffect, useState } from 'react';
 import {
   Collection, flatten, map,
@@ -22,6 +21,7 @@ type EditCourseModalProps = {
     course: Course,
     professorsList: Collection<Professor[]>,
     studentsList: Collection<Student[]>,
+    refresh: () => void,
 }
 
 const { Item } = Form;
@@ -31,6 +31,7 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
   professorsList,
   studentsList,
   course,
+  refresh,
 }) => {
   const [modalForm] = Form.useForm();
   const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
@@ -38,7 +39,6 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
   const [errorResponse, setErrorResponse] = useState <string>('');
   const flatProfessorsList: Professor[] = flatten(professorsList as any);
   const flatStudentsList: Student[] = flatten(studentsList as any);
-  const { reload } = useRouter();
 
   const filterProfessors = (input: string, option: any) => {
     const { label } = option;
@@ -57,8 +57,8 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
         setShowSucessResponse(true);
         setTimeout(() => {
           setShowSucessResponse(false);
-          reload();
         }, 3000);
+        refresh();
       }
     } catch (error: any) {
       setErrorResponse(error.message);

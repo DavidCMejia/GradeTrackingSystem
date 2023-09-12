@@ -51,16 +51,6 @@ const Courses: NextPage = () => {
 
   const { push, asPath } = useRouter();
 
-  const handleEditClick = (row: Course) => {
-    setOpenEditModal(true);
-    setSelectedCourse(row);
-  };
-
-  const viewStudents = (studentIds: number[]) => {
-    setStudentsIds(studentIds);
-    setOpenStudentModal(true);
-  };
-
   const fetchCourses = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
       .then((res) => {
@@ -92,6 +82,28 @@ const Courses: NextPage = () => {
         return null;
       })
       .catch((e) => message.error(e.toString()));
+  };
+
+  const handleEditClick = (row: Course) => {
+    setOpenEditModal(true);
+    setSelectedCourse(row);
+  };
+
+  const handleDeleteClick = (row: Course) => {
+    axios.delete(`${URL_BACKEND}/api/courses/${row.id}/`)
+      .then((res) => {
+        if (res && res.status === 204) {
+          message.success(`Course ${row.course_name.toUpperCase()} deleted successfully`);
+          fetchCourses();
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
+  const viewStudents = (studentIds: number[]) => {
+    setStudentsIds(studentIds);
+    setOpenStudentModal(true);
   };
 
   useEffect(() => {
@@ -178,7 +190,7 @@ const Courses: NextPage = () => {
                   </TableCell>
                   <TableCell style={centerRowStyle}>
                     <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
-                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleEditClick(course)}><DeleteIcon /></Button>
+                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(course)}><DeleteIcon /></Button>
                   </TableCell>
                 </TableRow>
               );
@@ -200,6 +212,7 @@ const Courses: NextPage = () => {
       <ModalEditCourse
         handleOpen={openEditModal}
         handleCancel={() => setOpenEditModal(false)}
+        refresh={fetchCourses}
         course={selectedCourse}
         professorsList={professorsList}
         studentsList={studentsList}
