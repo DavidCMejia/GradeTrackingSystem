@@ -11,8 +11,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <PersistGate loading={null} persistor={persistor}>
         <UserProvider>
           <Navbar />
-          <br />
-          <br />
+          {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
+          <br /><br /><br /><br /><br />
           <Component {...pageProps} />
         </UserProvider>
       </PersistGate>

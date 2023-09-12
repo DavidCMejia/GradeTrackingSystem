@@ -37,28 +37,28 @@ import { URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 
 import ModalStudents from '../../../components/modalStudents';
+import ModalEditCourse from '@/src/components/modalEditCourse';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
   const [studentsList, setStudentsList] = useState<Collection<Student[]>>();
   const [professorsList, setProfessorsList] = useState<Collection<Professor[]>>();
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+  const [selectedCourse, setSelectedCourse] = useState<Course>();
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
 
   const { push, asPath } = useRouter();
 
   const handleEditClick = (row: Course) => {
-    console.log('Editar:', row);
+    setOpenEditModal(true);
+    setSelectedCourse(row);
   };
 
-  const viewStudents = (studentsRow: number[]) => {
-    setStudentsIds(studentsRow);
+  const viewStudents = (studentIds: number[]) => {
+    setStudentsIds(studentIds);
     setOpenStudentModal(true);
-  };
-
-  const closeStudentsModal = () => {
-    setOpenStudentModal(false);
   };
 
   const fetchCourses = () => {
@@ -153,7 +153,7 @@ const Courses: NextPage = () => {
           <TableHead>
             <TableRow>
               <TableCell style={rowTitleStyle}>Code</TableCell>
-              {/* <TableCell style={rowTitleStyle}>id</TableCell> */}
+              <TableCell style={rowTitleStyle}>id</TableCell>
               <TableCell style={rowTitleStyle}>Name</TableCell>
               <TableCell style={rowTitleStyle}>Professor</TableCell>
               <TableCell style={rowTitleStyle}>Students</TableCell>
@@ -166,21 +166,33 @@ const Courses: NextPage = () => {
               && find(professorsList, { id: course.professor });
 
               return (
-                <TableRow key={course.id}>
-                  <TableCell style={centerRowStyle}>{course.course_code}</TableCell>
-                  {/* <TableCell style={centerRowStyle}>{course.id}</TableCell> */}
-                  <TableCell style={centerRowStyle}>{course.course_name.toUpperCase()}</TableCell>
-                  <TableCell style={centerRowStyle}>{get(foundProfessor, 'name')}</TableCell>
-                  <TableCell style={centerRowStyle}>
-                    <Button onClick={() => viewStudents(course.students)}>
-                      <VisibilityIcon />
-                    </Button>
-                  </TableCell>
-                  <TableCell style={centerRowStyle}>
-                    <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
-                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleEditClick(course)}><DeleteIcon /></Button>
-                  </TableCell>
-                </TableRow>
+                <>
+                  <TableRow key={course.id}>
+                    <TableCell style={centerRowStyle}>{course.course_code}</TableCell>
+                    <TableCell style={centerRowStyle}>{course.id}</TableCell>
+                    <TableCell style={centerRowStyle}>{course.course_name.toUpperCase()}</TableCell>
+                    <TableCell style={centerRowStyle}>{get(foundProfessor, 'name')}</TableCell>
+                    <TableCell style={centerRowStyle}>
+                      <Button onClick={() => viewStudents(course.students)}>
+                        <VisibilityIcon />
+                      </Button>
+                    </TableCell>
+                    <TableCell style={centerRowStyle}>
+                      <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
+                      <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleEditClick(course)}><DeleteIcon /></Button>
+                    </TableCell>
+                  </TableRow>
+                  {selectedCourse && professorsList && studentsList && (
+                    <ModalEditCourse
+                      handleOpen={openEditModal}
+                      handleCancel={() => setOpenEditModal(false)}
+                      course={selectedCourse}
+                      professorsList={professorsList}
+                      studentsList={studentsList}
+                    />
+                  )}
+
+                </>
               );
             })}
           </TableBody>
@@ -190,7 +202,7 @@ const Courses: NextPage = () => {
       {studentsList && (
         <ModalStudents
           handleOpen={openStudentModal}
-          handleCancel={closeStudentsModal}
+          handleCancel={() => setOpenStudentModal(false)}
           studentsList={studentsList}
           studentsIds={studentsIds}
         />
