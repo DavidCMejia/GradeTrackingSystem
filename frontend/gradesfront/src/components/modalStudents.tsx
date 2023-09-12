@@ -9,7 +9,12 @@ import {
   ListItemText,
 } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Collection, find, isEmpty } from 'lodash';
+import {
+  Collection,
+  find,
+  get,
+  isEmpty,
+} from 'lodash';
 import type { Student } from '../types';
 
 type StudentModalProps = {
@@ -56,7 +61,7 @@ const ModalStudents: FC<StudentModalProps> = ({
                   src={`/static/images/avatar/${value + 1}.jpg`}
                 />
               </ListItemAvatar>
-              <ListItemText id={labelId} primary={`${studentSelected?.name}`} />
+              <ListItemText id={labelId} primary={`${get(studentSelected, 'name')}`} />
             </ListItemButton>
           </ListItem>
         );

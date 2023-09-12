@@ -18,6 +18,7 @@ import { message } from 'antd';
 import {
   Collection,
   find,
+  get,
   isEmpty,
   map,
   orderBy,
@@ -160,27 +161,28 @@ const Courses: NextPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData && map(filteredData, (course) => (
-              <TableRow key={course.id}>
-                <TableCell style={centerRowStyle}>{course.course_code}</TableCell>
-                {/* <TableCell style={centerRowStyle}>{course.id}</TableCell> */}
-                <TableCell style={centerRowStyle}>{course.course_name.toUpperCase()}</TableCell>
-                <TableCell style={centerRowStyle}>
-                  {professorsList
-                  && find(
-                    professorsList,
-                    { id: course.professor },
-                  )?.name}
-                </TableCell>
-                <TableCell style={centerRowStyle}>
-                  <Button onClick={() => viewStudents(course.students)}><VisibilityIcon /></Button>
-                </TableCell>
-                <TableCell style={centerRowStyle}>
-                  <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
-                  <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleEditClick(course)}><DeleteIcon /></Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {filteredData && map(filteredData, (course) => {
+              const foundProfessor = professorsList
+              && find(professorsList, { id: course.professor });
+
+              return (
+                <TableRow key={course.id}>
+                  <TableCell style={centerRowStyle}>{course.course_code}</TableCell>
+                  {/* <TableCell style={centerRowStyle}>{course.id}</TableCell> */}
+                  <TableCell style={centerRowStyle}>{course.course_name.toUpperCase()}</TableCell>
+                  <TableCell style={centerRowStyle}>{get(foundProfessor, 'name')}</TableCell>
+                  <TableCell style={centerRowStyle}>
+                    <Button onClick={() => viewStudents(course.students)}>
+                      <VisibilityIcon />
+                    </Button>
+                  </TableCell>
+                  <TableCell style={centerRowStyle}>
+                    <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
+                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleEditClick(course)}><DeleteIcon /></Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
