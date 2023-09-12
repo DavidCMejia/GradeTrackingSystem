@@ -10,12 +10,14 @@ import {
   Button,
   Typography,
   CircularProgress,
+  TextField,
 } from '@mui/material';
 import { message } from 'antd';
 import {
   Collection,
   isEmpty,
   map,
+  orderBy,
 } from 'lodash';
 import { CSSProperties, useEffect, useState } from 'react';
 import axios from 'axios';
@@ -30,9 +32,12 @@ import ModalStudents from '../../../components/modalStudents';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
+  const sortedCoursesData = orderBy(coursesData, 'course_code', 'asc');
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [studentsList, setStudentsList] = useState<Collection<Student[]>>();
+  const [searchText, setSearchText] = useState<string>('');
+
   const { push, asPath } = useRouter();
 
   const handleEditClick = (row: Course) => {
@@ -83,7 +88,18 @@ const Courses: NextPage = () => {
       </Typography>
     );
   }
-  const centerRow: CSSProperties = {
+
+  const filteredData:Course[] = sortedCoursesData.filter(
+    (course) => course.course_name.toLowerCase().includes(searchText.toLowerCase())
+  || course.course_code.toLowerCase().includes(searchText.toLowerCase())
+  || course.professor.toString().toLowerCase().includes(searchText.toLowerCase()),
+  );
+
+  const rowTitleStyle: CSSProperties = {
+    textAlign: 'center',
+    fontWeight: 'bold',
+  };
+  const centerRowStyle: CSSProperties = {
     textAlign: 'center',
   };
   return (
@@ -93,35 +109,46 @@ const Courses: NextPage = () => {
         Courses
         <br />
         <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
+        <br />
+        <TextField
+          label="Search"
+          variant="outlined"
+          fullWidth
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{
+            marginBottom: '20px', marginTop: '20px', maxWidth: '100px', minWidth: '600px',
+          }}
+        />
       </Typography>
       <TableContainer
         component={Paper}
         style={{
-          border: '1px solid #ccc', margin: 'auto', maxWidth: '40%', minWidth: '600px',
+          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '600px',
         }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={centerRow}>id</TableCell>
-              <TableCell style={centerRow}>Name</TableCell>
-              <TableCell style={centerRow}>Code</TableCell>
-              <TableCell style={centerRow}>Professor</TableCell>
-              <TableCell style={centerRow}>Students</TableCell>
-              <TableCell style={centerRow}>Acciones</TableCell>
+              <TableCell style={rowTitleStyle}>Code</TableCell>
+              {/* <TableCell style={rowTitleStyle}>id</TableCell> */}
+              <TableCell style={rowTitleStyle}>Name</TableCell>
+              <TableCell style={rowTitleStyle}>Professor</TableCell>
+              <TableCell style={rowTitleStyle}>Students</TableCell>
+              <TableCell style={rowTitleStyle}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {coursesData && map(coursesData, (course) => (
+            {filteredData && map(filteredData, (course) => (
               <TableRow key={course.id}>
-                <TableCell style={centerRow}>{course.id}</TableCell>
-                <TableCell style={centerRow}>{course.course_name}</TableCell>
-                <TableCell style={centerRow}>{course.course_code}</TableCell>
-                <TableCell style={centerRow}>{course.professor}</TableCell>
-                <TableCell style={centerRow}>
+                <TableCell style={centerRowStyle}>{course.course_code}</TableCell>
+                {/* <TableCell style={centerRowStyle}>{course.id}</TableCell> */}
+                <TableCell style={centerRowStyle}>{course.course_name.toUpperCase()}</TableCell>
+                <TableCell style={centerRowStyle}>{course.professor}</TableCell>
+                <TableCell style={centerRowStyle}>
                   <Button onClick={() => viewStudents(course.students)}><VisibilityIcon /></Button>
                 </TableCell>
-                <TableCell>
+                <TableCell style={centerRowStyle}>
                   <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
                   <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleEditClick(course)}><DeleteIcon /></Button>
                 </TableCell>
