@@ -11,6 +11,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <PersistGate loading={null} persistor={persistor}>
         <UserProvider>
           <Navbar />
+          <br />
+          <br />
           <Component {...pageProps} />
         </UserProvider>
       </PersistGate>

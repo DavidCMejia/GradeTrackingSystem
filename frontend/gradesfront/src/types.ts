@@ -15,3 +15,11 @@ export type Student = MainInfo & {
     student_number?: number,
     courses_enrolled?: string[],
 }
+
+export type Course = {
+    id: string,
+    course_name: string,
+    course_code: string,
+    professor: number,
+    students: number[],
+}

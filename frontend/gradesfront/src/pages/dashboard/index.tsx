@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { Paper, Grid, Typography } from '@mui/material';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import TodayIcon from '@mui/icons-material/Today';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import { selectUser } from '../../selectors/mainSelectors';
-import { useRouter } from 'next/router';
 
 const Dashboard: NextPage = () => {
   const userRedux = useSelector(selectUser);
@@ -57,7 +57,7 @@ const Dashboard: NextPage = () => {
               </Typography>
             </Paper>
           </Grid>
-          <Grid key="Hola" item>
+          <Grid key="schedule" item>
             <Paper
               sx={{
                 p: 2,
