@@ -1,7 +1,6 @@
 import {
-  Button, Form, Input, Checkbox, Row, Col,
+  Button, Row, Col,
 } from 'antd';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCounter } from '../selectors/mainSelectors';
 import { decrement, increment } from '../slices/counterSlice';

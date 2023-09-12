@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import {
@@ -17,7 +18,7 @@ import type { Professor, Student } from '../../types';
 import { setUser } from '../../slices/userSlice';
 
 const VerifyInfo: NextPage = () => {
-  const { query } = useRouter();
+  const { query, push } = useRouter();
   const { user } = useUser();
   const [dataCheckedAlready, setDataCheckedAlready] = useState<boolean>(false);
   const [userData, setUserData] = useState<Professor | Student>();
@@ -30,9 +31,23 @@ const VerifyInfo: NextPage = () => {
       if (!dataCheckedAlready && userData && userRole) {
         const res = await axios.put(`${URL_BACKEND}/api/${userRole}/${userData?.id}/`, values);
         if (res && res.status === 201) message.success('Information verified successfully');
+        const {
+          id, name, email, role, identification_number,
+        } = res.data;
+        dispatch(setUser({
+          id, name, email, role, identification_number,
+        } as Professor | Student));
+        push('/dashboard');
       } else {
         const res = await axios.post(`${URL_BACKEND}/api/${userRole}/`, values);
         if (res && res.status === 201) message.success('Information verified successfully');
+        const {
+          id, name, email, role, identification_number,
+        } = res.data;
+        dispatch(setUser({
+          id, name, email, role, identification_number,
+        } as Professor | Student));
+        push('/dashboard');
       }
     } catch (error) {
       const parsedError = parseError(error);
@@ -64,23 +79,6 @@ const VerifyInfo: NextPage = () => {
       role: query.role,
     });
   }, [user, query]);
-
-  useEffect(() => {
-    if (userData) {
-      const {
-        id, name, email, role,
-      } = userData;
-
-      dispatch(
-        setUser({
-          id,
-          name,
-          email,
-          role,
-        } as Professor | Student),
-      );
-    }
-  }, [userData]);
 
   return (
     <>
