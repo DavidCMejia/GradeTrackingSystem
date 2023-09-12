@@ -13,13 +13,17 @@ import {
 } from '@mui/material';
 import { message } from 'antd';
 import {
-  Collection, isEmpty, map,
+  Collection,
+  isEmpty,
+  map,
 } from 'lodash';
 import { CSSProperties, useEffect, useState } from 'react';
 import axios from 'axios';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import Add from '@mui/icons-material/Add';
+import { useRouter } from 'next/router';
 import { URL_BACKEND } from '../../../constants';
 import { Course, Student } from '../../../types';
 import ModalStudents from '../../../components/modalStudents';
@@ -29,6 +33,7 @@ const Courses: NextPage = () => {
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [studentsList, setStudentsList] = useState<Collection<Student[]>>();
+  const { push, asPath } = useRouter();
 
   const handleEditClick = (row: Course) => {
     console.log('Editar:', row);
@@ -43,7 +48,7 @@ const Courses: NextPage = () => {
     setOpenStudentModal(false);
   };
 
-  useEffect(() => {
+  const fetchCourses = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
@@ -52,7 +57,9 @@ const Courses: NextPage = () => {
         return null;
       })
       .catch((e) => message.error(e.toString()));
+  };
 
+  const fetchStudents = () => {
     axios.get(`${URL_BACKEND}/api/students/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
@@ -61,6 +68,11 @@ const Courses: NextPage = () => {
         return null;
       })
       .catch((e) => message.error(e.toString()));
+  };
+
+  useEffect(() => {
+    fetchCourses();
+    fetchStudents();
   }, []);
 
   if (isEmpty(coursesData)) {
@@ -79,6 +91,8 @@ const Courses: NextPage = () => {
     <>
       <Typography variant="h4" align="center" gutterBottom>
         Courses
+        <br />
+        <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
       </Typography>
       <TableContainer
         component={Paper}
