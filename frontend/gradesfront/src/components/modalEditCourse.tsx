@@ -116,6 +116,7 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
           <br />
         </>
         )}
+        {!showSucessResponse && (
         <Form
           form={modalForm}
           labelCol={{ span: 8 }}
@@ -160,6 +161,7 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
             />
           </Item>
         </Form>
+        )}
       </Modal>
       )}
     </>
