@@ -8,14 +8,25 @@ import { map } from 'lodash';
 import { TableContainer, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
-import type { Professor, Student } from '../../../types';
+import type { Course, Professor, Student } from '../../../types';
 import { selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
 
 const { Item } = Form;
 const CreateCourse: NextPage = () => {
-  const [modalForm] = Form.useForm();
+  const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Course created successfully',
+      className: 'custom-class',
+      style: {
+        marginTop: '20vh',
+      },
+    });
+  };
 
   const filterProfessors = (input: string, option: any) => {
     const { label } = option;
@@ -26,14 +37,14 @@ const CreateCourse: NextPage = () => {
     return label.toLowerCase().includes(input.toLowerCase());
   };
 
-  const onFinish = async () => {
-    const values = modalForm.getFieldsValue();
+  const onFinish = async (values: Course) => {
     try {
       const res = await axios.post(`${URL_BACKEND}/api/courses/`, values);
-      if (res && res.status === 200) message.success('Course created successfully');
+      if (res && res.status === 201) success();
     } catch (error: any) {
       message.error(error.toString());
     }
+    form.resetFields();
   };
 
   return (
@@ -44,13 +55,14 @@ const CreateCourse: NextPage = () => {
         border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '600px',
       }}
     >
+      {contextHolder}
       <br />
       <Typography variant="h4" align="center" gutterBottom>
         Create Course
       </Typography>
       <br />
       <Form
-        form={modalForm}
+        form={form}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
