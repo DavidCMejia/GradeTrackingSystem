@@ -33,11 +33,13 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import Add from '@mui/icons-material/Add';
 
 import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 
 import ModalStudents from '../../../components/modalStudents';
 import ModalEditCourse from '../../../components/modalEditCourse';
+import { setStudents } from '../../../slices/studentsSlice';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
@@ -50,6 +52,7 @@ const Courses: NextPage = () => {
   const [searchText, setSearchText] = useState<string>('');
 
   const { push, asPath } = useRouter();
+  const dispatch = useDispatch();
 
   const fetchCourses = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
@@ -67,6 +70,7 @@ const Courses: NextPage = () => {
       .then((res) => {
         if (!isEmpty(res.data)) {
           setStudentsList(res.data);
+          dispatch(setStudents(res.data));
         }
         return null;
       })

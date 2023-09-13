@@ -7,12 +7,12 @@ export type MainInfo = {
     email: string
 }
 export type Professor = MainInfo & {
-    professor_number?: number,
+    professor_number?: string,
     courses_enrolled?: string[],
 }
 
 export type Student = MainInfo & {
-    student_number?: number,
+    student_number?: string,
     courses_enrolled?: string[],
 }
 

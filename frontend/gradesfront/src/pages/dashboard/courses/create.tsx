@@ -6,16 +6,15 @@ import { NextPage } from 'next';
 import axios from 'axios';
 import { map } from 'lodash';
 import { TableContainer, Paper, Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
 import type { Professor, Student } from '../../../types';
-
-type CreateCourseProps = {
-  userName: string;
-}
+import { selectStudents } from '../../../selectors/mainSelectors';
 
 const { Item } = Form;
-const CreateCourse: NextPage<CreateCourseProps> = () => {
+const CreateCourse: NextPage = () => {
   const [modalForm] = Form.useForm();
+  const studentsList: Student[] = useSelector(selectStudents);
 
   const filterProfessors = (input: string, option: any) => {
     const { label } = option;
@@ -83,6 +82,10 @@ const CreateCourse: NextPage<CreateCourseProps> = () => {
             placeholder="Select students"
             optionFilterProp="children"
             filterOption={filterStudents}
+            options={map(studentsList, (student:Student) => ({
+              value: student.id,
+              label: student.name,
+            }))}
           />
         </Item>
         <Item wrapperCol={{ offset: 8, span: 12 }}>
