@@ -52,7 +52,7 @@ const CreateCourse: NextPage = () => {
     <TableContainer
       component={Paper}
       style={{
-        border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '600px',
+        border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '650px',
       }}
     >
       {contextHolder}

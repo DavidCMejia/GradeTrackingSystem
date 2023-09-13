@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { NextPage } from 'next';
 import {
   Table,
@@ -47,11 +48,23 @@ const Courses: NextPage = () => {
   const [selectedCourse, setSelectedCourse] = useState<Course>();
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
+  const [messageApi, contextHolder] = message.useMessage();
 
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
 
   const { push, asPath } = useRouter();
+
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Course deleted successfully',
+      className: 'custom-class',
+      style: {
+        marginTop: '20vh',
+      },
+    });
+  };
 
   const fetchCourses = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
@@ -73,7 +86,7 @@ const Courses: NextPage = () => {
     axios.delete(`${URL_BACKEND}/api/courses/${row.id}/`)
       .then((res) => {
         if (res && res.status === 204) {
-          message.success(`Course ${row.course_name.toUpperCase()} deleted successfully`);
+          success();
           fetchCourses();
         }
         return null;
@@ -100,11 +113,16 @@ const Courses: NextPage = () => {
   }
 
   const sortedCoursesData = orderBy(coursesData, 'course_code', 'asc');
-  const filteredData:Course[] = sortedCoursesData
+  const searchTextLower = searchText.toLowerCase();
+  const filteredData: Course[] = sortedCoursesData
     .filter(
-      (course) => course.course_name.toLowerCase().includes(searchText.toLowerCase())
-  || course.course_code.toLowerCase().includes(searchText.toLowerCase())
-  || course.professor.toString().toLowerCase().includes(searchText.toLowerCase()),
+      ({
+        course_name,
+        course_code,
+        professor,
+      }) => course_name.toLowerCase().includes(searchTextLower)
+    || course_code.toLowerCase().includes(searchTextLower)
+    || professor.toString().toLowerCase().includes(searchTextLower),
     );
 
   const rowTitleStyle: CSSProperties = {
@@ -133,6 +151,7 @@ const Courses: NextPage = () => {
           }}
         />
       </Typography>
+      {contextHolder}
       <TableContainer
         component={Paper}
         style={{
