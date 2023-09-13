@@ -23,6 +23,8 @@ import type { Professor, Student } from '../../types';
 import { URL_BACKEND, roles } from '../../constants';
 import { parseError } from '../../utils';
 import { setUser } from '../../slices/userSlice';
+import { setStudents } from '../../slices/studentsSlice';
+import { setProfessors } from '../../slices/professorsSlice';
 
 const VerifyInfo: NextPage = () => {
   const { query, push } = useRouter();
@@ -32,6 +34,39 @@ const VerifyInfo: NextPage = () => {
   const [userRole, setUserRole] = useState<string>('');
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+
+  // const fetchCourses = () => {
+  //   axios.get(`${URL_BACKEND}/api/courses/`)
+  //     .then((res) => {
+  //       if (!isEmpty(res.data)) {
+  //         setCoursesData(res.data);
+  //       }
+  //       return null;
+  //     })
+  //     .catch((e) => message.error(e.toString()));
+  // };
+
+  const fetchStudents = () => {
+    axios.get(`${URL_BACKEND}/api/students/`)
+      .then((res) => {
+        if (!isEmpty(res.data)) {
+          dispatch(setStudents(res.data));
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
+  const fetchProfessors = () => {
+    axios.get(`${URL_BACKEND}/api/professors/`)
+      .then((res) => {
+        if (!isEmpty(res.data)) {
+          dispatch(setProfessors(res.data));
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
 
   const handleSubmit = async (values: Professor) => {
     try {
@@ -86,6 +121,12 @@ const VerifyInfo: NextPage = () => {
       role: query.role,
     });
   }, [user, query]);
+
+  useEffect(() => {
+    // fetchCourses();
+    fetchStudents();
+    fetchProfessors();
+  }, []);
 
   return (
     <>

@@ -16,7 +16,6 @@ import {
 import { message } from 'antd';
 
 import {
-  Collection,
   find,
   get,
   isEmpty,
@@ -33,57 +32,32 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import Add from '@mui/icons-material/Add';
 
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 
 import ModalStudents from '../../../components/modalStudents';
 import ModalEditCourse from '../../../components/modalEditCourse';
-import { setStudents } from '../../../slices/studentsSlice';
-import { setProfessors } from '../../../slices/professorsSlice';
+import { selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
-  const [studentsList, setStudentsList] = useState<Collection<Student[]>>();
-  const [professorsList, setProfessorsList] = useState<Collection<Professor[]>>();
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedCourse, setSelectedCourse] = useState<Course>();
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
 
+  const studentsList: Student[] = useSelector(selectStudents);
+  const professorsList: Professor[] = useSelector(selectProfessors);
+
   const { push, asPath } = useRouter();
-  const dispatch = useDispatch();
 
   const fetchCourses = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
           setCoursesData(res.data);
-        }
-        return null;
-      })
-      .catch((e) => message.error(e.toString()));
-  };
-
-  const fetchStudents = () => { // TODO: Pasar a redux en /dashboard si se vuelve a repetir
-    axios.get(`${URL_BACKEND}/api/students/`)
-      .then((res) => {
-        if (!isEmpty(res.data)) {
-          setStudentsList(res.data);
-          dispatch(setStudents(res.data));
-        }
-        return null;
-      })
-      .catch((e) => message.error(e.toString()));
-  };
-
-  const fetchProfessors = () => { // TODO: Pasar a redux en /dashboard si se vuelve a repetir
-    axios.get(`${URL_BACKEND}/api/professors/`)
-      .then((res) => {
-        if (!isEmpty(res.data)) {
-          setProfessorsList(res.data);
-          dispatch(setProfessors(res.data));
         }
         return null;
       })
@@ -114,8 +88,6 @@ const Courses: NextPage = () => {
 
   useEffect(() => {
     fetchCourses();
-    fetchStudents();
-    fetchProfessors();
   }, []);
 
   if (isEmpty(coursesData)) {
@@ -157,14 +129,14 @@ const Courses: NextPage = () => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           style={{
-            marginBottom: '20px', marginTop: '20px', maxWidth: '100px', minWidth: '600px',
+            marginBottom: '20px', marginTop: '20px', maxWidth: '100px', minWidth: '650px',
           }}
         />
       </Typography>
       <TableContainer
         component={Paper}
         style={{
-          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '600px',
+          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '650px',
         }}
       >
         <Table>

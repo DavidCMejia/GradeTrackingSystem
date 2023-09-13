@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import {
-  Collection,
   find,
   get,
   isEmpty,
@@ -19,7 +18,7 @@ import type { Student } from '../types';
 
 type StudentModalProps = {
     handleOpen: boolean,
-    studentsList: Collection<Student[]>,
+    studentsList: Student[],
     studentsIds: number[],
     handleCancel: () => void,
 }
