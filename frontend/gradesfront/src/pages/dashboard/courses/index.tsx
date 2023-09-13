@@ -40,6 +40,7 @@ import type { Course, Professor, Student } from '../../../types';
 import ModalStudents from '../../../components/modalStudents';
 import ModalEditCourse from '../../../components/modalEditCourse';
 import { setStudents } from '../../../slices/studentsSlice';
+import { setProfessors } from '../../../slices/professorsSlice';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
@@ -82,6 +83,7 @@ const Courses: NextPage = () => {
       .then((res) => {
         if (!isEmpty(res.data)) {
           setProfessorsList(res.data);
+          dispatch(setProfessors(res.data));
         }
         return null;
       })

@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import counterReducer from './slices/counterSlice';
 import userReducer from './slices/userSlice';
 import studentsReducer from './slices/studentsSlice';
+import professorsReducer from './slices/professorsSlice';
 
 const persistConfig = {
   key: 'root',
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   counter: counterReducer,
   user: userReducer,
   students: studentsReducer,
+  professors: professorsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

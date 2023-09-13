@@ -9,12 +9,13 @@ import { TableContainer, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
 import type { Professor, Student } from '../../../types';
-import { selectStudents } from '../../../selectors/mainSelectors';
+import { selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
 
 const { Item } = Form;
 const CreateCourse: NextPage = () => {
   const [modalForm] = Form.useForm();
   const studentsList: Student[] = useSelector(selectStudents);
+  const professorsList: Professor[] = useSelector(selectProfessors);
 
   const filterProfessors = (input: string, option: any) => {
     const { label } = option;
@@ -73,6 +74,10 @@ const CreateCourse: NextPage = () => {
             placeholder="Select a professor"
             optionFilterProp="children"
             filterOption={filterProfessors}
+            options={map(professorsList, (professor:Professor) => ({
+              value: professor.id,
+              label: professor.name,
+            }))}
           />
         </Item>
         <Item label="Students" name="students">
