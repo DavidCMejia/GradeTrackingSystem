@@ -1,16 +1,65 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Paper, Grid, Typography } from '@mui/material';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import TodayIcon from '@mui/icons-material/Today';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import { isEmpty } from 'lodash';
+import { message } from 'antd';
+import axios from 'axios';
+import { useEffect } from 'react';
 import { selectUser } from '../../selectors/mainSelectors';
 
+import { setStudents } from '../../slices/studentsSlice';
+import { setProfessors } from '../../slices/professorsSlice';
+import { setCourses } from '../../slices/coursesSlice';
+import { URL_BACKEND } from '../../constants';
+
 const Dashboard: NextPage = () => {
+  const dispatch = useDispatch();
   const userRedux = useSelector(selectUser);
   const { push } = useRouter();
   // console.log('🚀 ~ userRedux Dashboard:', userRedux);
+
+  const fetchCourses = () => {
+    axios.get(`${URL_BACKEND}/api/courses/`)
+      .then((res) => {
+        if (!isEmpty(res.data)) {
+          dispatch(setCourses(res.data));
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
+  const fetchStudents = () => {
+    axios.get(`${URL_BACKEND}/api/students/`)
+      .then((res) => {
+        if (!isEmpty(res.data)) {
+          dispatch(setStudents(res.data));
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
+  const fetchProfessors = () => {
+    axios.get(`${URL_BACKEND}/api/professors/`)
+      .then((res) => {
+        if (!isEmpty(res.data)) {
+          dispatch(setProfessors(res.data));
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
+  useEffect(() => {
+    fetchCourses();
+    fetchStudents();
+    fetchProfessors();
+  }, []);
 
   return (
     <>

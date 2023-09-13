@@ -6,6 +6,7 @@ import counterReducer from './slices/counterSlice';
 import userReducer from './slices/userSlice';
 import studentsReducer from './slices/studentsSlice';
 import professorsReducer from './slices/professorsSlice';
+import coursesReducer from './slices/coursesSlice';
 
 const persistConfig = {
   key: 'root',
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   students: studentsReducer,
   professors: professorsReducer,
+  courses: coursesReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
