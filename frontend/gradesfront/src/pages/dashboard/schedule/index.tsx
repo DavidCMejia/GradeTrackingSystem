@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react/no-array-index-key */
 import {
   Alert,
   Badge,
@@ -49,10 +51,10 @@ const ScheduleClass: NextPage = () => {
       date,
       duration,
     };
-    console.log('🚀 ~ valuesToSubmit:', {
-      ...valuesToSubmit,
-      date: valuesToSubmit.date.format('YYYY-MM-DD'),
-    });
+    // console.log('🚀 ~ valuesToSubmit:', {
+    //   ...valuesToSubmit,
+    //   date: valuesToSubmit.date.format('YYYY-MM-DD'),
+    // });
     // try {
     //   const res = await axios.put(`${URL_BACKEND}/api/students/${values.id}/`, values);
     //   if (res && res.status === 200) {
@@ -76,72 +78,6 @@ const ScheduleClass: NextPage = () => {
     setOpenModal(true);
   };
 
-  const getListData = (value: Dayjs) => {
-    let listData;
-    switch (value.date()) {
-      case 8:
-        listData = [
-          { type: 'warning', content: 'This is warning event.' },
-          { type: 'success', content: 'This is usual event.' },
-        ];
-        break;
-      case 10:
-        listData = [
-          { type: 'warning', content: 'This is warning event.' },
-          { type: 'success', content: 'This is usual event.' },
-          { type: 'error', content: 'This is error event.' },
-        ];
-        break;
-      case 15:
-        listData = [
-          { type: 'warning', content: 'This is warning event' },
-          { type: 'success', content: 'This is very long usual event......' },
-          { type: 'error', content: 'This is error event 1.' },
-          { type: 'error', content: 'This is error event 2.' },
-          { type: 'error', content: 'This is error event 3.' },
-          { type: 'error', content: 'This is error event 4.' },
-        ];
-        break;
-      default:
-    }
-    return listData || [];
-  };
-
-  const getMonthData = (value: Dayjs) => {
-    if (value.month() === 8) {
-      return 1394;
-    }
-  };
-
-  const monthCellRender = (value: Dayjs) => {
-    const num = getMonthData(value);
-    return num ? (
-      <div className="notes-month">
-        <section>{num}</section>
-        <span>Backlog number</span>
-      </div>
-    ) : null;
-  };
-
-  const dateCellRender = (value: Dayjs) => {
-    const listData = getListData(value);
-    return (
-      <ul className="events">
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge status={item.type as BadgeProps['status']} text={item.content} />
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
-  const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
-    if (info.type === 'date') return dateCellRender(current);
-    if (info.type === 'month') return monthCellRender(current);
-    return info.originNode;
-  };
-
   useEffect(() => {
     if (openModal) {
       modalForm.setFieldsValue({
@@ -150,12 +86,64 @@ const ScheduleClass: NextPage = () => {
     }
   }, [openModal]);
 
+  const calendarData = [
+    {
+      date: '2023-09-08', // Fecha en formato 'YYYY-MM-DD'
+      events: [
+        { type: 'warning', content: 'This is warning event.' },
+        { type: 'success', content: 'This is usual event.' },
+      ],
+    },
+    {
+      date: '2023-09-10',
+      events: [
+        { type: 'warning', content: 'This is warning event.' },
+        { type: 'success', content: 'This is usual event.' },
+        { type: 'error', content: 'This is error event.' },
+      ],
+    },
+    {
+      date: '2023-09-15',
+      events: [
+        { type: 'warning', content: 'This is warning event' },
+        { type: 'success', content: 'This is very long usual event......' },
+        { type: 'error', content: 'This is error event 1.' },
+        { type: 'error', content: 'This is error event 2.' },
+        { type: 'error', content: 'This is error event 3.' },
+        { type: 'error', content: 'This is error event 4.' },
+      ],
+    },
+  ];
+
   return (
     <>
       <Calendar
         value={date}
         onSelect={onSelect}
-        cellRender={cellRender}
+        cellRender={(current, info) => {
+          if (info.type === 'date') {
+            const eventData = calendarData.find((item) => item.date === current.format('YYYY-MM-DD'));
+            return eventData ? (
+              <ul className="events">
+                {eventData.events.map((item, index) => (
+                  <li key={index}>
+                    <Badge status={item.type as BadgeProps['status']} text={item.content} />
+                  </li>
+                ))}
+              </ul>
+            ) : null;
+          }
+          if (info.type === 'month') {
+            const eventData = calendarData.find((item) => item.date === current.format('YYYY-MM-DD'));
+            return eventData ? (
+              <div className="notes-month">
+                <section>{eventData.monthData}</section>
+                <span>Backlog number</span>
+              </div>
+            ) : null;
+          }
+          return info.originNode;
+        }}
       />
       <Modal
         title="Schedule Class"
@@ -186,7 +174,7 @@ const ScheduleClass: NextPage = () => {
             <DatePicker
               value={date}
               style={{ width: '100%' }}
-              onChange={(value) => setDate(value)}
+              onChange={(value) => { if (value) setDate(value); }}
             />
           </Item>
           <Item label="Time" name="time">
