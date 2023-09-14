@@ -37,17 +37,17 @@ import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 
-import ModalStudents from '../../../components/modalStudents';
+import ModalCourses from '../../../components/modalCourses';
 import ModalEditCourse from '../../../components/modalEditCourse';
 import { selectCourses, selectProfessors } from '../../../selectors/mainSelectors';
 
 const Courses: NextPage = () => {
   const [studentsData, setStudentsData] = useState<Student[]>();
   console.log('🚀 ~ studentsData:', studentsData);
-  const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
+  const [openCoursesModal, setOpenCoursesModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedCourse, setSelectedCourse] = useState<Student>();
-  const [coursesIds, setCoursesIds] = useState<string[]>([]);
+  const [coursesIds, setCoursesIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -55,6 +55,7 @@ const Courses: NextPage = () => {
   const coursesList: Course[] = useSelector(selectCourses);
 
   const { push, asPath } = useRouter();
+  // TODO: Poner name required en create student
 
   const sortedStudentssData = orderBy(studentsData, 'name', 'asc');
   const searchTextLower = searchText.toLowerCase();
@@ -110,7 +111,7 @@ const Courses: NextPage = () => {
 
   const viewCourses = (cIds: string[]) => {
     setCoursesIds(cIds);
-    setOpenStudentModal(true);
+    setOpenCoursesModal(true);
   };
 
   useEffect(() => {
@@ -201,16 +202,17 @@ const Courses: NextPage = () => {
           </TableBody>
         </Table>
       </TableContainer>
-{/* 
-      {studentsList && (
-        <ModalStudents
-          handleOpen={openStudentModal}
-          handleCancel={() => setOpenStudentModal(false)}
-          studentsList={studentsList}
-          studentsIds={coursesIds}
+
+      {coursesList && (
+        <ModalCourses
+          handleOpen={openCoursesModal}
+          handleCancel={() => setOpenCoursesModal(false)}
+          coursesList={coursesList}
+          coursesIds={coursesIds}
         />
       )}
 
+{/* 
       {selectedCourse && professorsList && studentsList && (
       <ModalEditCourse
         handleOpen={openEditModal}

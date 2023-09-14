@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 export type MainInfo = {
-    id?: string,
+    id?: number,
     identification_number: string,
     name: string,
     role?: string,
@@ -17,7 +17,7 @@ export type Student = MainInfo & {
 }
 
 export type Course = {
-    id: string,
+    id: number,
     course_name: string,
     course_code: string,
     professor: number,
