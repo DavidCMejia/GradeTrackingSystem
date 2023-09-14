@@ -72,7 +72,7 @@ const CreateCourse: NextPage = () => {
           <Input />
         </Item>
         <Item label="Code" name="course_code">
-          <Input />
+          <Input placeholder="101" />
         </Item>
         <Item
           label="Name"
