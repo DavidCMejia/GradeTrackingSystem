@@ -17,11 +17,10 @@ import {
 import { message } from 'antd';
 
 import {
-  find,
-  get,
   isEmpty,
   map,
   orderBy,
+  upperFirst,
 } from 'lodash';
 
 import { CSSProperties, useEffect, useState } from 'react';
@@ -35,11 +34,11 @@ import Add from '@mui/icons-material/Add';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { URL_BACKEND, roles } from '../../../constants';
-import type { Course, Professor, Student } from '../../../types';
+import type { Course, Student } from '../../../types';
 
 import ModalCourses from '../../../components/modalCourses';
-import ModalEditCourse from '../../../components/modalEditCourse';
-import { selectCourses, selectProfessors } from '../../../selectors/mainSelectors';
+import ModalEditStudent from '../../../components/modalEditStudent';
+import { selectCourses } from '../../../selectors/mainSelectors';
 
 const Courses: NextPage = () => {
   const [studentsData, setStudentsData] = useState<Student[]>();
@@ -50,7 +49,6 @@ const Courses: NextPage = () => {
   const [searchText, setSearchText] = useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
 
-  const professorsList: Professor[] = useSelector(selectProfessors);
   const coursesList: Course[] = useSelector(selectCourses);
 
   const { push, asPath } = useRouter();
@@ -63,10 +61,10 @@ const Courses: NextPage = () => {
       ({
         name,
         identification_number,
-        student_number,
+        email,
       }) => name.toLowerCase().includes(searchTextLower)
-    || identification_number.toLowerCase().includes(searchTextLower)
-    || student_number?.toString().toLowerCase().includes(searchTextLower),
+    || identification_number?.toLowerCase().includes(searchTextLower)
+    || email?.toLowerCase().includes(searchTextLower),
     );
 
   const success = () => {
@@ -162,7 +160,7 @@ const Courses: NextPage = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={rowTitleStyle}>id</TableCell>
+              {/* <TableCell style={rowTitleStyle}>id</TableCell> */}
               {/* <TableCell style={rowTitleStyle}>#</TableCell> */}
               <TableCell style={rowTitleStyle}>Identification</TableCell>
               <TableCell style={rowTitleStyle}>Name</TableCell>
@@ -178,12 +176,11 @@ const Courses: NextPage = () => {
 
               return (
                 <TableRow key={student.id}>
-                  <TableCell style={centerRowStyle}>{student.id}</TableCell>
+                  {/* <TableCell style={centerRowStyle}>{student.id}</TableCell> */}
                   {/* <TableCell style={centerRowStyle}>{student.student_number}</TableCell> */}
                   <TableCell style={centerRowStyle}>{student.identification_number}</TableCell>
                   <TableCell style={centerRowStyle}>{student.name}</TableCell>
-                  {/* <TableCell style={centerRowStyle}>{get(foundRole, 'name')}</TableCell> */}
-                  <TableCell style={centerRowStyle}>{foundRole || '--'}</TableCell>
+                  <TableCell style={centerRowStyle}>{upperFirst(foundRole) || '--'}</TableCell>
                   <TableCell style={centerRowStyle}>{student.email}</TableCell>
                   <TableCell style={centerRowStyle}>
                     <Button onClick={() => viewCourses(student.courses_enrolled)}>
@@ -210,17 +207,16 @@ const Courses: NextPage = () => {
         />
       )}
 
-{/* 
-      {selectedCourse && professorsList && studentsList && (
-      <ModalEditCourse
+      {selectedStudent && coursesList && studentsData && (
+      <ModalEditStudent
         handleOpen={openEditModal}
         handleCancel={() => setOpenEditModal(false)}
-        refresh={fetchCourses}
-        course={selectedCourse}
-        professorsList={professorsList}
-        studentsList={studentsList}
+        refresh={fetchStudents}
+        student={selectedStudent}
+        courseList={coursesList}
+        studentsList={studentsData}
       />
-      )} */}
+      )}
 
     </>
   );

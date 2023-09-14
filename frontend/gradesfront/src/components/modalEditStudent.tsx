@@ -10,14 +10,14 @@ import {
 import { FC, useEffect, useState } from 'react';
 import { map } from 'lodash';
 import axios from 'axios';
-import type { Course, Professor, Student } from '../types';
-import { URL_BACKEND } from '../constants';
+import type { Course, Student } from '../types';
+import { URL_BACKEND, roleOptionsSelect } from '../constants';
 
 type EditCourseModalProps = {
     handleOpen: boolean,
     handleCancel: () => void,
-    course: Course,
-    professorsList:Professor[],
+    student: Student,
+    courseList: Course[],
     studentsList: Student[],
     refresh: () => void,
 }
@@ -26,9 +26,9 @@ const { Item } = Form;
 const ModalEditStudent: FC<EditCourseModalProps> = ({
   handleOpen,
   handleCancel,
-  professorsList,
+  courseList,
   studentsList,
-  course,
+  student,
   refresh,
 }) => {
   const [modalForm] = Form.useForm();
@@ -36,11 +36,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
   const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
   const [errorResponse, setErrorResponse] = useState <string>('');
 
-  const filterProfessors = (input: string, option: any) => {
-    const { label } = option;
-    return label.toLowerCase().includes(input.toLowerCase());
-  };
-  const filterStudents = (input: string, option: any) => {
+  const filterCourses = (input: string, option: any) => {
     const { label } = option;
     return label.toLowerCase().includes(input.toLowerCase());
   };
@@ -66,24 +62,26 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
   };
 
   useEffect(() => {
-    if (course) {
+    if (student) {
       const {
-        id, course_name, course_code, professor, students,
-      } = course;
+        id, student_number, identification_number, name, role, email, courses_enrolled,
+      } = student;
 
       modalForm.setFieldsValue({
         id,
-        course_name,
-        course_code,
-        professor,
-        students,
+        student_number,
+        identification_number,
+        name,
+        role,
+        email,
+        courses_enrolled,
       });
     }
-  }, [course]);
+  }, [student]);
 
   return (
     <>
-      {professorsList && studentsList && (
+      {courseList && studentsList && (
       <Modal
         title="Update Student"
         open={handleOpen}
@@ -94,7 +92,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
         <>
           <Alert
             message="Student Updated"
-            description={`${course.course_name.toUpperCase()} successfully updated`}
+            description={`${student.name.toUpperCase()} successfully updated`}
             type="success"
             showIcon
           />
@@ -105,7 +103,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
         <>
           <Alert
             message="Student Not Updated"
-            description={`There was an error updating ${course.course_name.toUpperCase()}, error: ${errorResponse}`}
+            description={`There was an error updating ${student.name.toUpperCase()}, error: ${errorResponse}`}
             type="error"
             showIcon
           />
@@ -122,7 +120,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           <Item label="id" name="id" hidden>
             <Input />
           </Item>
-          <Item label="#" name="student_number">
+          <Item label="#" name="student_number" hidden>
             <Input />
           </Item>
           <Item label="Identification" name="identification_number">
@@ -134,34 +132,26 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           >
             <Input />
           </Item>
-          <Item
-            label="Rol"
-            name="role"
-          >
-            <Input />
-          </Item>
-          <Item label="Professor" name="professor">
+          <Item label="Role" name="role">
             <Select
-              showSearch
-              placeholder="Select a professor"
-              optionFilterProp="children"
-              filterOption={filterProfessors}
-              options={map(professorsList, (professor:Professor) => ({
-                value: professor.id,
-                label: professor.name,
-              }))}
+              defaultValue="lucy"
+              placeholder="Select role"
+              options={roleOptionsSelect}
             />
           </Item>
-          <Item label="Students" name="students">
+          <Item label="Email" name="email">
+            <Input />
+          </Item>
+          <Item label="Courses" name="courses_enrolled">
             <Select
               showSearch
               mode="multiple"
-              placeholder="Select students"
+              placeholder="Select course"
               optionFilterProp="children"
-              filterOption={filterStudents}
-              options={map(studentsList, (student:Student) => ({
-                value: student.id,
-                label: student.name,
+              filterOption={filterCourses}
+              options={map(courseList, (course:Course) => ({
+                value: course.id,
+                label: course.course_name.toUpperCase(),
               }))}
             />
           </Item>

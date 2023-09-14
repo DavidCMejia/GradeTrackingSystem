@@ -8,7 +8,7 @@ type CreateCourseProps = {
 const CreateStudent: NextPage<CreateCourseProps> = () => {
   const hola = 'hola';
   return (
-    <h1>Create Course </h1>
+    <h1>Create Student </h1>
   );
 };
 
