@@ -25,9 +25,10 @@ import { useEffect, useState } from 'react';
 import { get, isEmpty, map } from 'lodash';
 
 import type { Dayjs } from 'dayjs';
-import type { Course } from '../../../types';
+import type { Course, Professor, Student } from '../../../types';
 
-import { selectCourses } from '../../../selectors/mainSelectors';
+import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
+import { filterCourses, filterProfessors, filterStudents } from '../../../utils';
 
 const { Item } = Form;
 const ScheduleClass: NextPage = () => {
@@ -40,15 +41,13 @@ const ScheduleClass: NextPage = () => {
   // console.log('🚀 ~ date:', date.format('YYYY-MM-DD'));
   const [openModal, setOpenModal] = useState(false);
   const [duration, setDuration] = useState(0);
-  const courseList: Course[] = useSelector(selectCourses);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [httpMethod, setHttpMethod] = useState('');
   // console.log('🚀 ~ setDuration:', duration); // en MINUTOS
 
-  const filterCourses = (input: string, option: any) => {
-    const { label } = option;
-    return label.toLowerCase().includes(input.toLowerCase());
-  };
+  const courseList: Course[] = useSelector(selectCourses);
+  const studentsList: Student[] = useSelector(selectStudents);
+  const professorsList: Professor[] = useSelector(selectProfessors);
 
   const onFinish = (values) => {
     const valuesToSubmit = {
@@ -96,6 +95,7 @@ const ScheduleClass: NextPage = () => {
       modalForm.setFieldsValue({
         date,
         course: findCourseByName?.id,
+        // students,
       });
 
       if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
@@ -142,7 +142,7 @@ const ScheduleClass: NextPage = () => {
                   <li
                     style={{ listStyle: 'none' }}
                     key={index}
-                    onClick={() => setSelectedEvent(item)} // Establece el evento seleccionado
+                    onClick={() => setSelectedEvent(item)}
                   >
                     <Badge
                       status={item.type ? item.type : 'default'} // Usa 'default' si 'type' no está presente
@@ -176,7 +176,6 @@ const ScheduleClass: NextPage = () => {
           <Item label="Course" name="course">
             <Select
               showSearch
-              mode="multiple"
               placeholder="Select course"
               optionFilterProp="children"
               filterOption={filterCourses}
@@ -202,10 +201,35 @@ const ScheduleClass: NextPage = () => {
               }}
             />
           </Item>
-          <Item label="Description" name="description">
-            <Input />
+          <Item label="Students" name="students">
+            <Select
+              showSearch
+              mode="multiple"
+              placeholder="Select students"
+              optionFilterProp="children"
+              filterOption={filterStudents}
+              options={map(studentsList, (student:Student) => ({
+                value: student.id,
+                label: student.name,
+              }))}
+            />
+          </Item>
+          <Item label="Professor" name="professor">
+            <Select
+              showSearch
+              placeholder="Select a professor"
+              optionFilterProp="children"
+              filterOption={filterProfessors}
+              options={map(professorsList, (professor:Professor) => ({
+                value: professor.id,
+                label: professor.name,
+              }))}
+            />
           </Item>
           <Item label="Link" name="link">
+            <Input />
+          </Item>
+          <Item label="Description" name="description">
             <Input />
           </Item>
         </Form>

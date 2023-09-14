@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import { URL_BACKEND, roleOptionsSelect } from '../../../constants';
 import type { Course, Student } from '../../../types';
 import { selectCourses } from '../../../selectors/mainSelectors';
+import { filterCourses } from '../../../utils';
 
 const { Item } = Form;
 const CreateStudent: NextPage = () => {
@@ -27,11 +28,6 @@ const CreateStudent: NextPage = () => {
         marginTop: '20vh',
       },
     });
-  };
-
-  const filterCourses = (input: string, option: any) => {
-    const { label } = option;
-    return label.toLowerCase().includes(input.toLowerCase());
   };
 
   const onFinish = async (values: Student) => {

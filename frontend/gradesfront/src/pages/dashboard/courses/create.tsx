@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import { URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 import { selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
+import { filterProfessors, filterStudents } from '../../../utils';
 
 const { Item } = Form;
 const CreateCourse: NextPage = () => {
@@ -28,15 +29,6 @@ const CreateCourse: NextPage = () => {
         marginTop: '20vh',
       },
     });
-  };
-
-  const filterProfessors = (input: string, option: any) => {
-    const { label } = option;
-    return label.toLowerCase().includes(input.toLowerCase());
-  };
-  const filterStudents = (input: string, option: any) => {
-    const { label } = option;
-    return label.toLowerCase().includes(input.toLowerCase());
   };
 
   const onFinish = async (values: Course) => {

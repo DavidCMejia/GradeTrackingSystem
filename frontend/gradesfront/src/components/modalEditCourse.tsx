@@ -12,6 +12,7 @@ import { map } from 'lodash';
 import axios from 'axios';
 import type { Course, Professor, Student } from '../types';
 import { URL_BACKEND } from '../constants';
+import { filterProfessors, filterStudents } from '../utils';
 
 type EditCourseModalProps = {
     handleOpen: boolean,
@@ -35,15 +36,6 @@ const ModalEditCourse: FC<EditCourseModalProps> = ({
   const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
   const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
   const [errorResponse, setErrorResponse] = useState <string>('');
-
-  const filterProfessors = (input: string, option: any) => {
-    const { label } = option;
-    return label.toLowerCase().includes(input.toLowerCase());
-  };
-  const filterStudents = (input: string, option: any) => {
-    const { label } = option;
-    return label.toLowerCase().includes(input.toLowerCase());
-  };
 
   const onFinish = async () => {
     const values = modalForm.getFieldsValue();

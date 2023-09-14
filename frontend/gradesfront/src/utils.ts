@@ -15,4 +15,18 @@ export const parseError = (error) => {
 
   return errorMessage;
 };
-export const v = '';
+
+export const filterCourses = (input: string, option: any) => {
+  const { label } = option;
+  return label.toLowerCase().includes(input.toLowerCase());
+};
+
+export const filterStudents = (input: string, option: any) => {
+  const { label } = option;
+  return label.toLowerCase().includes(input.toLowerCase());
+};
+
+export const filterProfessors = (input: string, option: any) => {
+  const { label } = option;
+  return label.toLowerCase().includes(input.toLowerCase());
+};
