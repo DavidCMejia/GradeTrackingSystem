@@ -122,12 +122,21 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           <Item label="id" name="id" hidden>
             <Input />
           </Item>
-          <Item label="Code" name="course_code">
+          <Item label="#" name="student_number">
+            <Input />
+          </Item>
+          <Item label="Identification" name="identification_number">
             <Input />
           </Item>
           <Item
             label="Name"
-            name="course_name"
+            name="name"
+          >
+            <Input />
+          </Item>
+          <Item
+            label="Rol"
+            name="role"
           >
             <Input />
           </Item>

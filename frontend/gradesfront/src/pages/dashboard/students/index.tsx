@@ -34,7 +34,7 @@ import Add from '@mui/icons-material/Add';
 
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { URL_BACKEND } from '../../../constants';
+import { URL_BACKEND, roles } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 
 import ModalCourses from '../../../components/modalCourses';
@@ -148,7 +148,7 @@ const Courses: NextPage = () => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           style={{
-            marginBottom: '20px', marginTop: '20px', maxWidth: '100px', minWidth: '750px',
+            marginBottom: '20px', marginTop: '20px', maxWidth: '100px', minWidth: '800px',
           }}
         />
       </Typography>
@@ -156,7 +156,7 @@ const Courses: NextPage = () => {
       <TableContainer
         component={Paper}
         style={{
-          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '750px',
+          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '800px',
         }}
       >
         <Table>
@@ -174,8 +174,7 @@ const Courses: NextPage = () => {
           </TableHead>
           <TableBody>
             {filteredData && map(filteredData, (student) => {
-              const foundRole = studentsData
-              && find(studentsData, { role: student.role });
+              const foundRole = roles[Number(student.role)];
 
               return (
                 <TableRow key={student.id}>
@@ -184,7 +183,7 @@ const Courses: NextPage = () => {
                   <TableCell style={centerRowStyle}>{student.identification_number}</TableCell>
                   <TableCell style={centerRowStyle}>{student.name}</TableCell>
                   {/* <TableCell style={centerRowStyle}>{get(foundRole, 'name')}</TableCell> */}
-                  <TableCell style={centerRowStyle}>{student.role}</TableCell>
+                  <TableCell style={centerRowStyle}>{foundRole || '--'}</TableCell>
                   <TableCell style={centerRowStyle}>{student.email}</TableCell>
                   <TableCell style={centerRowStyle}>
                     <Button onClick={() => viewCourses(student.courses_enrolled)}>

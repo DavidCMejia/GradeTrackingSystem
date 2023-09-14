@@ -3,7 +3,7 @@ export type MainInfo = {
     id?: number,
     identification_number: string,
     name: string,
-    role?: string,
+    role: string,
     email: string
 }
 export type Professor = MainInfo & {
