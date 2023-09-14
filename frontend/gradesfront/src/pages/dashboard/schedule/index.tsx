@@ -41,9 +41,7 @@ const ScheduleClass: NextPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [duration, setDuration] = useState(0);
   const courseList: Course[] = useSelector(selectCourses);
-  console.log('🚀 ~ courseList:', courseList);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  console.log('🚀 ~ selectedEvent:', selectedEvent);
   // console.log('🚀 ~ setDuration:', duration); // en MINUTOS
 
   const filterCourses = (input: string, option: any) => {
@@ -101,32 +99,27 @@ const ScheduleClass: NextPage = () => {
     }
   }, [openModal]);
 
-  const idCurso = 1;
+  const idCurso = 7;
+
+  const findCourse = (id: number) => {
+    const foundedCourse = courseList.find((course) => course.id === id);
+    const courseName = get(foundedCourse, 'course_name');
+    return courseName?.toUpperCase();
+  };
 
   const calendarData = [
     {
       date: '2023-09-08', // Fecha en formato 'YYYY-MM-DD'
       events: [
-        { content: get(courseList, `[${idCurso}].course_name`) },
-      ],
-    },
-    {
-      date: '2023-09-10',
-      events: [
-        { content: 'This is warning event.' },
-        { content: 'This is usual event.' },
-        { content: 'This is error event.' },
+        { content: findCourse(idCurso) },
       ],
     },
     {
       date: '2023-09-15',
       events: [
-        { content: 'This is warning event' },
-        { content: 'This is very long usual event......' },
-        { content: 'This is error event 1.' },
-        { content: 'This is error event 2.' },
-        { content: 'This is error event 3.' },
-        { content: 'This is error event 4.' },
+        { content: findCourse(idCurso) },
+        { content: findCourse(idCurso) },
+        { content: findCourse(idCurso) },
       ],
     },
   ];
