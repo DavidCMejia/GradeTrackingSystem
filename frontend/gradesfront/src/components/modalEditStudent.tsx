@@ -134,8 +134,8 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           </Item>
           <Item label="Role" name="role">
             <Select
-              defaultValue="lucy"
               placeholder="Select role"
+              defaultValue={roleOptionsSelect[1]}
               options={roleOptionsSelect}
             />
           </Item>

@@ -7,6 +7,7 @@ import axios from 'axios';
 import { map } from 'lodash';
 import { TableContainer, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import { URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 import { selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
@@ -14,6 +15,7 @@ import { selectProfessors, selectStudents } from '../../../selectors/mainSelecto
 const { Item } = Form;
 const CreateCourse: NextPage = () => {
   const [form] = Form.useForm();
+  const { push } = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
@@ -45,6 +47,7 @@ const CreateCourse: NextPage = () => {
       message.error(error.toString());
     }
     form.resetFields();
+    push('/dashboard/courses');
   };
 
   return (
@@ -66,7 +69,6 @@ const CreateCourse: NextPage = () => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
-        title="Create Course"
       >
         <Item label="id" name="id" hidden>
           <Input />
