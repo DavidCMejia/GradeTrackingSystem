@@ -15,6 +15,7 @@ import {
   Modal,
   Select,
   TimePicker,
+  message,
 } from 'antd';
 import { NextPage } from 'next';
 import dayjs from 'dayjs';
@@ -22,9 +23,12 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
-import { get, isEmpty, map } from 'lodash';
+import {
+  find, get, isEmpty, map,
+} from 'lodash';
 
 import type { Dayjs } from 'dayjs';
+import axios from 'axios';
 import type {
   Course,
   Professor,
@@ -34,6 +38,7 @@ import type {
 
 import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
 import { filterCourses, filterProfessors, filterStudents } from '../../../utils';
+import { URL_BACKEND } from '../../../constants';
 
 const { Item } = Form;
 const ScheduleClass: NextPage = () => {
@@ -48,30 +53,46 @@ const ScheduleClass: NextPage = () => {
   const [duration, setDuration] = useState(0);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [httpMethod, setHttpMethod] = useState('');
+  const [showSucessResponse, setShowSucessResponse] = useState(false);
+  const [showFailureResponse, setShowFailureResponse] = useState(false);
+  const [errorResponse, setErrorResponse] = useState('');
+  const [schedulesData, setScheduleData] = useState<Schedule[]>([]);
+  const [singleSchedule, setSingleSchedule] = useState<Schedule>({} as Schedule);
   // console.log('🚀 ~ setDuration:', duration); // en MINUTOS
 
   const courseList: Course[] = useSelector(selectCourses);
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
 
-  const onFinish = (values: Schedule) => {
+  const fetchSchedules = async () => {
+    axios.get(`${URL_BACKEND}/api/schedules/`)
+      .then((res) => {
+        if (!isEmpty(res.data)) {
+          setScheduleData(res.data);
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
+  const onFinish = async (values: Schedule) => {
     const valuesToSubmit = {
       ...values,
-      date,
+      time: duration,
+      date: date.format('YYYY-MM-DD'),
       duration,
     };
     console.log('🚀 ~ valuesToSubmit:', {
       ...valuesToSubmit,
-      date: valuesToSubmit.date.format('YYYY-MM-DD'),
+      date,
     });
     // try {
-    //   const res = await axios.put(`${URL_BACKEND}/api/students/${values.id}/`, values);
+    //   const res = await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
     //   if (res && res.status === 200) {
     //     setShowSucessResponse(true);
     //     setTimeout(() => {
     //       setShowSucessResponse(false);
     //     }, 3000);
-    //     refresh();
     //   }
     // } catch (error: any) {
     //   setErrorResponse(error.message);
@@ -88,7 +109,8 @@ const ScheduleClass: NextPage = () => {
   };
 
   useEffect(() => {
-    if (openModal) {
+    if (openModal && schedulesData) {
+      const { students, professor, link, description } = singleSchedule;
       const event = selectedEvent?.content;
       const findCourseByName = courseList
         .find(
@@ -100,14 +122,15 @@ const ScheduleClass: NextPage = () => {
       modalForm.setFieldsValue({
         date,
         course: findCourseByName?.id,
-        // students,
+        students,
+        professor,
+        link,
+        description,
       });
 
       if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
     }
   }, [openModal]);
-
-  const idCurso = 7;
 
   const findCourse = (id: number) => {
     const foundedCourse = courseList.find((course) => course.id === id);
@@ -115,22 +138,33 @@ const ScheduleClass: NextPage = () => {
     return courseName?.toUpperCase();
   };
 
-  const calendarData = [
-    {
-      date: '2023-09-08', // Fecha en formato 'YYYY-MM-DD'
+  const dynamicCalendarData = map(
+    schedulesData,
+    (schedule: Schedule) => ({
+      date: schedule.date,
       events: [
-        { content: findCourse(idCurso) },
+        { content: findCourse(schedule.course) },
       ],
-    },
-    {
-      date: '2023-09-15',
-      events: [
-        { content: findCourse(idCurso) },
-        { content: findCourse(idCurso) },
-        { content: findCourse(idCurso) },
-      ],
-    },
-  ];
+    }),
+  );
+
+  useEffect(() => {
+    // setting singleSchedule
+    // find schedulesData the one with the same date and course
+
+    const event = selectedEvent?.content;
+    const foundSchedule = schedulesData
+      .find(
+        (schedule: Schedule) => dayjs(schedule.date).isSame(date, 'day')
+        && findCourse(schedule.course).toLowerCase().includes(event?.toLowerCase()),
+      );
+
+    setSingleSchedule(foundSchedule);
+  }, [schedulesData, date]);
+
+  useEffect(() => {
+    fetchSchedules();
+  }, []);
 
   return (
     <>
@@ -140,7 +174,7 @@ const ScheduleClass: NextPage = () => {
         onSelect={onSelect}
         cellRender={(current, info) => {
           if (info.type === 'date') {
-            const eventData = calendarData.find((item) => item.date === current.format('YYYY-MM-DD'));
+            const eventData = dynamicCalendarData.find((item) => dayjs(item.date).isSame(current, 'day'));
             return eventData ? (
               <ul className="events" style={{ listStyleType: 'none' }}>
                 {eventData.events.map((item, index) => (
@@ -238,13 +272,22 @@ const ScheduleClass: NextPage = () => {
             <Input />
           </Item>
         </Form>
-        {/* <Alert
+        {showSucessResponse && (
+        <Alert
           message="Class Scheduled"
-          description={`Class successfully scheduled for ${selectedValue?.format('YYYY-MM-DD')}`}
+          description={`Class successfully scheduled for ${date?.format('YYYY-MM-DD')}`}
           type="success"
           showIcon
         />
-        <br /> */}
+        )}
+        {showFailureResponse && (
+          <Alert
+            message="Error"
+            description={errorResponse}
+            type="error"
+            showIcon
+          />
+        )}
       </Modal>
     </>
   );

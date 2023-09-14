@@ -18,6 +18,7 @@ export type Student = MainInfo & {
 
 export type Course = {
     id: number,
+    uuid?: string,
     course_name: string,
     course_code: string,
     professor: number,
@@ -25,6 +26,8 @@ export type Course = {
 }
 
 export type Schedule = {
+    id?: number,
+    uuid?: string,
     course: number,
     date: Date,
     time: number,

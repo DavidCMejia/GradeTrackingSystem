@@ -50,7 +50,7 @@ class Schedule(TimestampedModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
     date = models.DateField()
-    time = models.CharField(max_length=10, blank=True, null=True) #minutes
+    time = models.IntegerField(max_length=10, blank=True, null=True) #minutes
     students = models.ManyToManyField('Student', blank=True)
     professor = models.ForeignKey('Professor', on_delete=models.SET_NULL, null=True, blank=True)
     link = models.CharField(max_length=100, blank=True, null=True)
