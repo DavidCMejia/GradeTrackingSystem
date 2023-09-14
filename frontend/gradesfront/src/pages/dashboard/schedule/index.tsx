@@ -22,7 +22,7 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
-import { get, map } from 'lodash';
+import { get, isEmpty, map } from 'lodash';
 
 import type { Dayjs } from 'dayjs';
 import type { Course } from '../../../types';
@@ -42,6 +42,7 @@ const ScheduleClass: NextPage = () => {
   const [duration, setDuration] = useState(0);
   const courseList: Course[] = useSelector(selectCourses);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [httpMethod, setHttpMethod] = useState('');
   // console.log('🚀 ~ setDuration:', duration); // en MINUTOS
 
   const filterCourses = (input: string, option: any) => {
@@ -89,13 +90,15 @@ const ScheduleClass: NextPage = () => {
         .find(
           (course: Course) => course.course_name
             .toLowerCase()
-            .includes(event.toLowerCase()),
+            .includes(event?.toLowerCase()),
         );
 
       modalForm.setFieldsValue({
         date,
         course: findCourseByName?.id,
       });
+
+      if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
     }
   }, [openModal]);
 
@@ -159,6 +162,7 @@ const ScheduleClass: NextPage = () => {
         onCancel={() => {
           setOpenModal(false);
           setSelectedEvent(null);
+          setHttpMethod('');
         }}
         onOk={modalForm.submit}
         okText="Schedule"
