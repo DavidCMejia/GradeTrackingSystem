@@ -30,7 +30,10 @@ export type Schedule = {
     uuid?: string,
     course: number,
     date: Date,
-    time: number,
+    time: string[],
+    starts: string
+    ends: string,
+    duration: number,
     students: number[],
     professor: number,
     link: string,

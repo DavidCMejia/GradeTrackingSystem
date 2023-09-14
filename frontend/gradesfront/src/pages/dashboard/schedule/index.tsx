@@ -5,10 +5,7 @@
 import {
   Alert,
   Badge,
-  BadgeProps,
-  Button,
   Calendar,
-  CalendarProps,
   DatePicker,
   Form,
   Input,
@@ -24,7 +21,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import {
-  find, get, isEmpty, map,
+  get, isEmpty, map, omit,
 } from 'lodash';
 
 import type { Dayjs } from 'dayjs';
@@ -58,7 +55,6 @@ const ScheduleClass: NextPage = () => {
   const [errorResponse, setErrorResponse] = useState('');
   const [schedulesData, setScheduleData] = useState<Schedule[]>([]);
   const [singleSchedule, setSingleSchedule] = useState<Schedule>({} as Schedule);
-  // console.log('🚀 ~ setDuration:', duration); // en MINUTOS
 
   const courseList: Course[] = useSelector(selectCourses);
   const studentsList: Student[] = useSelector(selectStudents);
@@ -76,31 +72,33 @@ const ScheduleClass: NextPage = () => {
   };
 
   const onFinish = async (values: Schedule) => {
+    const hourTime = values.time.map((t) => dayjs(t));
+    const formattedTime = hourTime.map((timeValue) => timeValue.format(hourFormat));
+
     const valuesToSubmit = {
-      ...values,
-      time: duration,
+      ...omit(values, 'time'),
+      starts: formattedTime[0],
+      ends: formattedTime[1],
       date: date.format('YYYY-MM-DD'),
       duration,
     };
-    console.log('🚀 ~ valuesToSubmit:', {
-      ...valuesToSubmit,
-      date,
-    });
-    // try {
-    //   const res = await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
-    //   if (res && res.status === 200) {
-    //     setShowSucessResponse(true);
-    //     setTimeout(() => {
-    //       setShowSucessResponse(false);
-    //     }, 3000);
-    //   }
-    // } catch (error: any) {
-    //   setErrorResponse(error.message);
-    //   setShowFailureResponse(true);
-    //   setTimeout(() => {
-    //     setShowFailureResponse(false);
-    //   }, 4000);
-    // }
+    // console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);
+    try {
+      const res = await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
+      if (res && res.status === 200) {
+        setShowSucessResponse(true);
+        setTimeout(() => {
+          setShowSucessResponse(false);
+        }, 3000);
+        fetchSchedules();
+      }
+    } catch (error: any) {
+      setErrorResponse(error.message);
+      setShowFailureResponse(true);
+      setTimeout(() => {
+        setShowFailureResponse(false);
+      }, 4000);
+    }
   };
 
   const onSelect = (newValue: Dayjs) => {
@@ -109,8 +107,10 @@ const ScheduleClass: NextPage = () => {
   };
 
   useEffect(() => {
-    if (openModal && schedulesData) {
-      const { students, professor, link, description } = singleSchedule;
+    if (openModal && singleSchedule) {
+      const {
+        students, professor, link, description,
+      } = singleSchedule;
       const event = selectedEvent?.content;
       const findCourseByName = courseList
         .find(
@@ -119,6 +119,9 @@ const ScheduleClass: NextPage = () => {
             .includes(event?.toLowerCase()),
         );
 
+      const startTime = dayjs(singleSchedule.starts, hourFormat);
+      const endTime = dayjs(singleSchedule.ends, hourFormat);
+
       modalForm.setFieldsValue({
         date,
         course: findCourseByName?.id,
@@ -126,11 +129,12 @@ const ScheduleClass: NextPage = () => {
         professor,
         link,
         description,
+        time: [startTime, endTime],
       });
 
       if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
     }
-  }, [openModal]);
+  }, [openModal, singleSchedule]);
 
   const findCourse = (id: number) => {
     const foundedCourse = courseList.find((course) => course.id === id);
@@ -159,7 +163,7 @@ const ScheduleClass: NextPage = () => {
         && findCourse(schedule.course).toLowerCase().includes(event?.toLowerCase()),
       );
 
-    setSingleSchedule(foundSchedule);
+    setSingleSchedule(foundSchedule || {} as Schedule);
   }, [schedulesData, date]);
 
   useEffect(() => {
