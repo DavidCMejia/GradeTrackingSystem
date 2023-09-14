@@ -13,7 +13,7 @@ export type Professor = MainInfo & {
 
 export type Student = MainInfo & {
     student_number?: string,
-    courses_enrolled: string[],
+    courses_enrolled: number[],
 }
 
 export type Course = {

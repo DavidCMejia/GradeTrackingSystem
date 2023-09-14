@@ -43,10 +43,9 @@ import { selectCourses, selectProfessors } from '../../../selectors/mainSelector
 
 const Courses: NextPage = () => {
   const [studentsData, setStudentsData] = useState<Student[]>();
-  console.log('🚀 ~ studentsData:', studentsData);
   const [openCoursesModal, setOpenCoursesModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [selectedCourse, setSelectedCourse] = useState<Student>();
+  const [selectedStudent, setSelectedStudent] = useState<Student>();
   const [coursesIds, setCoursesIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
@@ -73,7 +72,7 @@ const Courses: NextPage = () => {
   const success = () => {
     messageApi.open({
       type: 'success',
-      content: 'Course deleted successfully',
+      content: 'Student deleted successfully',
       className: 'custom-class',
       style: {
         marginTop: '20vh',
@@ -94,7 +93,7 @@ const Courses: NextPage = () => {
 
   const handleEditClick = (row: Student) => {
     setOpenEditModal(true);
-    setSelectedCourse(row);
+    setSelectedStudent(row);
   };
 
   const handleDeleteClick = (row: Student) => {
@@ -109,7 +108,7 @@ const Courses: NextPage = () => {
       .catch((e) => message.error(e.toString()));
   };
 
-  const viewCourses = (cIds: string[]) => {
+  const viewCourses = (cIds: number[]) => {
     setCoursesIds(cIds);
     setOpenCoursesModal(true);
   };
