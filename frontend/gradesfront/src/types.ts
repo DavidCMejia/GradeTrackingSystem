@@ -23,3 +23,13 @@ export type Course = {
     professor: number,
     students: number[],
 }
+
+export type Schedule = {
+    course: number,
+    date: Date,
+    time: number,
+    students: number[],
+    professor: number,
+    link: string,
+    description: string,
+}

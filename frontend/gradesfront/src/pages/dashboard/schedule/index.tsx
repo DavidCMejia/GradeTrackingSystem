@@ -25,7 +25,12 @@ import { useEffect, useState } from 'react';
 import { get, isEmpty, map } from 'lodash';
 
 import type { Dayjs } from 'dayjs';
-import type { Course, Professor, Student } from '../../../types';
+import type {
+  Course,
+  Professor,
+  Schedule,
+  Student,
+} from '../../../types';
 
 import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
 import { filterCourses, filterProfessors, filterStudents } from '../../../utils';
@@ -49,7 +54,7 @@ const ScheduleClass: NextPage = () => {
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
 
-  const onFinish = (values) => {
+  const onFinish = (values: Schedule) => {
     const valuesToSubmit = {
       ...values,
       date,
