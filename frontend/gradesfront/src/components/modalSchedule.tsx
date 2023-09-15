@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable camelcase */
 import {
@@ -11,14 +12,17 @@ import {
 } from 'antd';
 import { FC, useEffect, useState } from 'react';
 import { isEmpty, map, omit } from 'lodash';
-import axios from 'axios';
-import type { Dayjs } from 'dayjs';
+
 import dayjs from 'dayjs';
+import axios from 'axios';
+
+import type { Dayjs } from 'dayjs';
 import type {
   Course, Professor, Schedule, Student,
 } from '../types';
-import { URL_BACKEND } from '../constants';
+
 import { filterCourses, filterProfessors, filterStudents } from '../utils';
+import { URL_BACKEND } from '../constants';
 
 type scheduleModalProps = {
     handleCancel: () => void,
@@ -65,10 +69,13 @@ const ModalSchedule: FC<scheduleModalProps> = ({
       date: date.format('YYYY-MM-DD'),
       duration,
     };
-    // console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);
+    console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);
     try {
-      const res = await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
-      if (res && res.status === 201) {
+      const res = httpMethod === 'PUT'
+        ? await axios.put(`${URL_BACKEND}/api/schedules/${schedule.id}/`, valuesToSubmit)
+        : await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
+
+      if (res && (res.status === 201 || res.status === 200)) {
         setShowSucessResponse(true);
         setTimeout(() => {
           setShowSucessResponse(false);
@@ -85,7 +92,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
   };
 
   useEffect(() => {
-    if (schedule) {
+    if (!isEmpty(schedule)) {
       const {
         students, professor, link, description,
       } = schedule;
@@ -97,8 +104,8 @@ const ModalSchedule: FC<scheduleModalProps> = ({
             .includes(event?.toLowerCase()),
         );
 
-      const startTime = dayjs(schedule.starts, hourFormat);
-      const endTime = dayjs(schedule.ends, hourFormat);
+      const formmatedStart = dayjs(schedule.starts, hourFormat);
+      const formmatedEnd = dayjs(schedule.ends, hourFormat);
 
       modalForm.setFieldsValue({
         date,
@@ -107,15 +114,16 @@ const ModalSchedule: FC<scheduleModalProps> = ({
         professor,
         link,
         description,
-        time: ([startTime, endTime]),
+        time: ([formmatedStart, formmatedEnd]),
       });
 
       if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
     }
+    modalForm.setFieldsValue({ date });
   }, [schedule]);
 
   useEffect(() => {
-    if (!handleOpen) setHttpMethod('');
+    if (!handleOpen) setHttpMethod(''); modalForm.resetFields();
   }, [handleOpen]);
 
   return (
@@ -151,6 +159,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
             <DatePicker
               value={date}
               style={{ width: '100%' }}
+              onChange={(newValue) => { if (newValue) date = newValue; }}
             />
           </Item>
           <Item label="Time" name="time">
@@ -158,7 +167,9 @@ const ModalSchedule: FC<scheduleModalProps> = ({
               format={hourFormat}
               style={{ width: '100%' }}
               onOk={(value) => {
-                if (value && value[1]) setDuration(value[1].diff(value[0], 'minute'));
+                if (value && value[1] && value[0]) {
+                  setDuration(value[1].diff(value[0], 'minute'));
+                }
               }}
             />
           </Item>

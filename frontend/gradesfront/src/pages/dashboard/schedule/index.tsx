@@ -63,7 +63,6 @@ const ScheduleClass: NextPage = () => {
     setOpenModal(true);
   };
 
-
   const findCourse = (id: number) => {
     const foundedCourse = courseList.find((course) => course.id === id);
     const courseName = get(foundedCourse, 'course_name');
