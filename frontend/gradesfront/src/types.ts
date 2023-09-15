@@ -41,3 +41,5 @@ export type Schedule = {
 }
 
 export type ValidStatus = 'default' | 'success' | 'processing' | 'error' | 'warning';
+
+export type calendarEvent = { content: string | undefined } | null;

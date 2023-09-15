@@ -18,7 +18,7 @@ import axios from 'axios';
 
 import type { Dayjs } from 'dayjs';
 import type {
-  Course, Professor, Schedule, Student,
+  Course, Professor, Schedule, Student, calendarEvent,
 } from '../types';
 
 import { filterCourses, filterProfessors, filterStudents } from '../utils';
@@ -34,7 +34,7 @@ type scheduleModalProps = {
     courseList: Course[],
     date: Dayjs,
     hourFormat: string,
-    selectedEvent: any,
+    selectedEvent: calendarEvent,
 }
 
 const { Item } = Form;
@@ -69,7 +69,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
       date: date.format('YYYY-MM-DD'),
       duration,
     };
-    console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);
+    // console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);
     try {
       const res = httpMethod === 'PUT'
         ? await axios.put(`${URL_BACKEND}/api/schedules/${schedule.id}/`, valuesToSubmit)
@@ -92,11 +92,11 @@ const ModalSchedule: FC<scheduleModalProps> = ({
   };
 
   useEffect(() => {
-    if (!isEmpty(schedule)) {
+    const event = selectedEvent?.content;
+    if (!isEmpty(schedule) && event) {
       const {
         students, professor, link, description,
       } = schedule;
-      const event = selectedEvent?.content;
       const findCourseByName = courseList
         .find(
           (course: Course) => course.course_name

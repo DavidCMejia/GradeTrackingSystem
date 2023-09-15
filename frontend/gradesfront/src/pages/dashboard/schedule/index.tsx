@@ -27,6 +27,7 @@ import type {
   Schedule,
   Student,
   ValidStatus,
+  calendarEvent,
 } from '../../../types';
 
 import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
@@ -40,7 +41,7 @@ const ScheduleClass: NextPage = () => {
   const [date, setDate] = useState(() => dayjs(today));
   // console.log('🚀 ~ date:', date.format('YYYY-MM-DD'));
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<{ content: string | undefined } | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<calendarEvent>(null);
   const [schedulesData, setScheduleData] = useState<Schedule[]>([]);
   const [singleSchedule, setSingleSchedule] = useState<Schedule>({} as Schedule);
 
@@ -95,7 +96,7 @@ const ScheduleClass: NextPage = () => {
       const foundSchedule = schedulesData
         .find(
           (schedule: Schedule) => dayjs(schedule.date).isSame(date, 'day')
-      && findCourse(schedule.course).toLowerCase().includes(event?.toLowerCase()),
+          && findCourse(schedule.course).toLowerCase().includes(event?.toLowerCase()),
         );
 
       setSingleSchedule(foundSchedule || {} as Schedule);
