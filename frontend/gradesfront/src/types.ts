@@ -39,3 +39,5 @@ export type Schedule = {
     link: string,
     description: string,
 }
+
+export type ValidStatus = 'default' | 'success' | 'processing' | 'error' | 'warning';

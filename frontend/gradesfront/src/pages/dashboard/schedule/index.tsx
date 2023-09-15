@@ -26,6 +26,7 @@ import type {
   Professor,
   Schedule,
   Student,
+  ValidStatus,
 } from '../../../types';
 
 import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
@@ -39,7 +40,7 @@ const ScheduleClass: NextPage = () => {
   const [date, setDate] = useState(() => dayjs(today));
   // console.log('🚀 ~ date:', date.format('YYYY-MM-DD'));
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState<{ content: string | undefined } | null>(null);
   const [schedulesData, setScheduleData] = useState<Schedule[]>([]);
   const [singleSchedule, setSingleSchedule] = useState<Schedule>({} as Schedule);
 
@@ -65,8 +66,11 @@ const ScheduleClass: NextPage = () => {
 
   const findCourse = (id: number) => {
     const foundedCourse = courseList.find((course) => course.id === id);
-    const courseName = get(foundedCourse, 'course_name');
-    return courseName?.toUpperCase();
+    if (foundedCourse) {
+      const courseName = get(foundedCourse, 'course_name');
+      return courseName?.toUpperCase();
+    }
+    return '';
   };
 
   const dynamicCalendarData = map(
@@ -74,7 +78,10 @@ const ScheduleClass: NextPage = () => {
     (schedule: Schedule) => ({
       date: schedule.date,
       events: [
-        { content: findCourse(schedule.course) },
+        {
+          content: findCourse(schedule.course),
+          type: 'default',
+        },
       ],
     }),
   );
@@ -84,13 +91,15 @@ const ScheduleClass: NextPage = () => {
     // find schedulesData the one with the same date and course
 
     const event = selectedEvent?.content;
-    const foundSchedule = schedulesData
-      .find(
-        (schedule: Schedule) => dayjs(schedule.date).isSame(date, 'day')
-        && findCourse(schedule.course).toLowerCase().includes(event?.toLowerCase()),
-      );
+    if (event) {
+      const foundSchedule = schedulesData
+        .find(
+          (schedule: Schedule) => dayjs(schedule.date).isSame(date, 'day')
+      && findCourse(schedule.course).toLowerCase().includes(event?.toLowerCase()),
+        );
 
-    setSingleSchedule(foundSchedule || {} as Schedule);
+      setSingleSchedule(foundSchedule || {} as Schedule);
+    }
   }, [schedulesData, date]);
 
   useEffect(() => {
@@ -115,7 +124,7 @@ const ScheduleClass: NextPage = () => {
                     onClick={() => setSelectedEvent(item)}
                   >
                     <Badge
-                      status={item.type ? item.type : 'default'} // Usa 'default' si 'type' no está presente
+                      status={item.type ? item.type as ValidStatus : 'default'} // Usa 'default' si 'type' no está presente
                       text={item.content}
                     />
                   </li>
