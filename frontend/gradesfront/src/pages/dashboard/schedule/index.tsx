@@ -1,9 +1,9 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable react/no-array-index-key */
+
 import {
   Badge,
+  Button,
   Calendar,
   message,
 } from 'antd';
@@ -16,18 +16,17 @@ import { useEffect, useState } from 'react';
 import {
   get,
   isEmpty,
-  map,
 } from 'lodash';
 
 import type { Dayjs } from 'dayjs';
 import axios from 'axios';
 import type {
+  CalendarEvent,
   Course,
   Professor,
   Schedule,
   Student,
   ValidStatus,
-  calendarEvent,
 } from '../../../types';
 
 import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
@@ -41,7 +40,8 @@ const ScheduleClass: NextPage = () => {
   const [date, setDate] = useState(() => dayjs(today));
   // console.log('🚀 ~ date:', date.format('YYYY-MM-DD'));
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<calendarEvent>(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent>({} as CalendarEvent);
+  console.log('🚀 ~ selectedEvent:', selectedEvent);
   const [schedulesData, setScheduleData] = useState<Schedule[]>([]);
   const [singleSchedule, setSingleSchedule] = useState<Schedule>({} as Schedule);
 
@@ -74,18 +74,29 @@ const ScheduleClass: NextPage = () => {
     return '';
   };
 
-  const dynamicCalendarData = map(
-    schedulesData,
-    (schedule: Schedule) => ({
-      date: schedule.date,
-      events: [
-        {
+  const dynamicCalendarData = schedulesData.reduce((accumulator: CalendarEvent[], schedule) => {
+    const day = schedule.date;
+    const existingEntry = accumulator.find((entry) => entry.date === day);
+
+    if (existingEntry) {
+      // Agrega el evento al grupo existente
+      existingEntry.events.push({
+        content: findCourse(schedule.course),
+        type: 'default',
+      });
+    } else {
+      // Crea un nuevo grupo
+      accumulator.push({
+        date: day,
+        events: [{
           content: findCourse(schedule.course),
           type: 'default',
-        },
-      ],
-    }),
-  );
+        }],
+      });
+    }
+
+    return accumulator;
+  }, []);
 
   useEffect(() => {
     // setting singleSchedule
@@ -119,16 +130,22 @@ const ScheduleClass: NextPage = () => {
             return eventData ? (
               <ul className="events" style={{ listStyleType: 'none' }}>
                 {eventData.events.map((item, index) => (
-                  <li
-                    style={{ listStyle: 'none' }}
-                    key={index}
-                    onClick={() => setSelectedEvent(item)}
-                  >
-                    <Badge
-                      status={item.type ? item.type as ValidStatus : 'default'} // Usa 'default' si 'type' no está presente
-                      text={item.content}
-                    />
-                  </li>
+                  <>
+                    <Button
+                      key={Number(index)}
+                      onClick={() => setSelectedEvent({
+                        date: eventData.date,
+                        content: item.content,
+                      } as CalendarEvent)}
+                    >
+                      <Badge
+                        status={item.type ? item.type as ValidStatus : 'default'} // Usa 'default' si 'type' no está presente
+                        text={item.content}
+                      />
+                    </Button>
+                    <br />
+
+                  </>
                 ))}
               </ul>
             ) : null;
@@ -136,11 +153,12 @@ const ScheduleClass: NextPage = () => {
           return info.originNode;
         }}
       />
+      {selectedEvent && (
       <ModalSchedule
         handleOpen={openModal}
         handleCancel={() => {
           setOpenModal(false);
-          setSelectedEvent(null);
+          setSelectedEvent({} as CalendarEvent);
         }}
         refresh={fetchSchedules}
         studentsList={studentsList}
@@ -151,6 +169,7 @@ const ScheduleClass: NextPage = () => {
         schedule={singleSchedule}
         selectedEvent={selectedEvent}
       />
+      )}
     </>
   );
 };

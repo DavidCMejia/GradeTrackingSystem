@@ -18,7 +18,11 @@ import axios from 'axios';
 
 import type { Dayjs } from 'dayjs';
 import type {
-  Course, Professor, Schedule, Student, calendarEvent,
+  CalendarEvent,
+  Course,
+  Professor,
+  Schedule,
+  Student,
 } from '../types';
 
 import { filterCourses, filterProfessors, filterStudents } from '../utils';
@@ -34,7 +38,7 @@ type scheduleModalProps = {
     courseList: Course[],
     date: Dayjs,
     hourFormat: string,
-    selectedEvent: calendarEvent,
+    selectedEvent: CalendarEvent,
 }
 
 const { Item } = Form;
