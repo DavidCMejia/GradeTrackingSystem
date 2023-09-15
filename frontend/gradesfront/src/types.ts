@@ -27,7 +27,7 @@ export type Course = {
 
 export type Schedule = {
     id?: number,
-    uuid?: string,
+    uuid: string,
     course: number,
     date: Date,
     time: string[],

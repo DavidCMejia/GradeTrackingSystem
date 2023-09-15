@@ -3,6 +3,7 @@
 /* eslint-disable camelcase */
 import {
   Alert,
+  Button,
   DatePicker,
   Form,
   Input,
@@ -11,7 +12,9 @@ import {
   TimePicker,
 } from 'antd';
 import { FC, useEffect, useState } from 'react';
-import { isEmpty, map, omit } from 'lodash';
+import {
+  first, isEmpty, map, omit,
+} from 'lodash';
 
 import dayjs from 'dayjs';
 import axios from 'axios';
@@ -32,7 +35,7 @@ type scheduleModalProps = {
     handleCancel: () => void,
     refresh: () => void,
     handleOpen: boolean,
-    schedule: Schedule,
+    schedules: Schedule[],
     professorsList:Professor[],
     studentsList: Student[],
     courseList: Course[],
@@ -48,19 +51,20 @@ const ModalSchedule: FC<scheduleModalProps> = ({
   professorsList,
   studentsList,
   courseList,
-  schedule,
+  schedules,
   date,
   refresh,
   hourFormat,
   selectedEvent,
 }) => {
-  // console.log('🚀 ~ date:', date.format('YYYY-MM-DD'));
   const [modalForm] = Form.useForm();
   const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
   const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
   const [errorResponse, setErrorResponse] = useState <string>('');
-  const [httpMethod, setHttpMethod] = useState('');
-  const [duration, setDuration] = useState(0);
+  const [httpMethod, setHttpMethod] = useState<string>('');
+  const [duration, setDuration] = useState<number>(0);
+  const [singleSchedule, setSingleSchedule] = useState<Schedule>();
+  const [multipleSchedules, setMultipleSchudules] = useState<boolean>(false);
 
   const onFinish = async (values: Schedule) => {
     const hourTime = values.time.map((t) => dayjs(t));
@@ -74,33 +78,35 @@ const ModalSchedule: FC<scheduleModalProps> = ({
       duration,
     };
     // console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);
-    try {
-      const res = httpMethod === 'PUT'
-        ? await axios.put(`${URL_BACKEND}/api/schedules/${schedule.id}/`, valuesToSubmit)
-        : await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
+    if (!isEmpty(singleSchedule)) {
+      try {
+        const res = httpMethod === 'PUT'
+          ? await axios.put(`${URL_BACKEND}/api/schedules/${singleSchedule.id}/`, valuesToSubmit)
+          : await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
 
-      if (res && (res.status === 201 || res.status === 200)) {
-        setShowSucessResponse(true);
+        if (res && (res.status === 201 || res.status === 200)) {
+          setShowSucessResponse(true);
+          setTimeout(() => {
+            setShowSucessResponse(false);
+          }, 3000);
+          refresh();
+        }
+      } catch (error: any) {
+        setErrorResponse(error.message);
+        setShowFailureResponse(true);
         setTimeout(() => {
-          setShowSucessResponse(false);
-        }, 3000);
-        refresh();
+          setShowFailureResponse(false);
+        }, 4000);
       }
-    } catch (error: any) {
-      setErrorResponse(error.message);
-      setShowFailureResponse(true);
-      setTimeout(() => {
-        setShowFailureResponse(false);
-      }, 4000);
     }
   };
 
   useEffect(() => {
     const event = selectedEvent?.content;
-    if (!isEmpty(schedule) && event) {
+    if (!isEmpty(singleSchedule) && event) {
       const {
         students, professor, link, description,
-      } = schedule;
+      } = singleSchedule;
       const findCourseByName = courseList
         .find(
           (course: Course) => course.course_name
@@ -108,8 +114,8 @@ const ModalSchedule: FC<scheduleModalProps> = ({
             .includes(event?.toLowerCase()),
         );
 
-      const formmatedStart = dayjs(schedule.starts, hourFormat);
-      const formmatedEnd = dayjs(schedule.ends, hourFormat);
+      const formmatedStart = dayjs(singleSchedule.starts, hourFormat);
+      const formmatedEnd = dayjs(singleSchedule.ends, hourFormat);
 
       modalForm.setFieldsValue({
         date,
@@ -124,91 +130,112 @@ const ModalSchedule: FC<scheduleModalProps> = ({
       if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
     }
     modalForm.setFieldsValue({ date });
-  }, [schedule]);
+  }, [singleSchedule, selectedEvent]);
 
   useEffect(() => {
     if (!handleOpen) setHttpMethod(''); modalForm.resetFields();
   }, [handleOpen]);
 
+  useEffect(() => {
+    if (schedules && schedules.length > 1) {
+      setMultipleSchudules(true);
+    } else {
+      setMultipleSchudules(false);
+      setSingleSchedule(first(schedules));
+    }
+  }, [schedules]);
+
   return (
     <>
       {professorsList && studentsList && courseList && hourFormat && (
       <Modal
-        title="Schedule Class"
+        title={multipleSchedules ? 'Multiple Schedules' : 'Schedule Class'}
         open={handleOpen}
         onCancel={handleCancel}
         onOk={modalForm.submit}
         okText="Schedule"
+        footer={multipleSchedules ? null : undefined}
       >
-        {!showSucessResponse && (
-        <Form
-          form={modalForm}
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 12 }}
-          onFinish={onFinish}
-        >
-          <Item label="Course" name="course">
-            <Select
-              showSearch
-              placeholder="Select course"
-              optionFilterProp="children"
-              filterOption={filterCourses}
-              options={map(courseList, (c:Course) => ({
-                value: c.id,
-                label: c.course_name.toUpperCase(),
-              }))}
-            />
-          </Item>
-          <Item label="Date" name="date">
-            <DatePicker
-              value={date}
-              style={{ width: '100%' }}
-              onChange={(newValue) => { if (newValue) date = newValue; }}
-            />
-          </Item>
-          <Item label="Time" name="time">
-            <TimePicker.RangePicker
-              format={hourFormat}
-              style={{ width: '100%' }}
-              onOk={(value) => {
-                if (value && value[1] && value[0]) {
-                  setDuration(value[1].diff(value[0], 'minute'));
-                }
-              }}
-            />
-          </Item>
-          <Item label="Students" name="students">
-            <Select
-              showSearch
-              mode="multiple"
-              placeholder="Select students"
-              optionFilterProp="children"
-              filterOption={filterStudents}
-              options={map(studentsList, (student:Student) => ({
-                value: student.id,
-                label: student.name,
-              }))}
-            />
-          </Item>
-          <Item label="Professor" name="professor">
-            <Select
-              showSearch
-              placeholder="Select a professor"
-              optionFilterProp="children"
-              filterOption={filterProfessors}
-              options={map(professorsList, (professor:Professor) => ({
-                value: professor.id,
-                label: professor.name,
-              }))}
-            />
-          </Item>
-          <Item label="Link" name="link">
-            <Input />
-          </Item>
-          <Item label="Description" name="description">
-            <Input />
-          </Item>
-        </Form>
+        {!showSucessResponse && !multipleSchedules && (
+        <>
+          <Form
+            form={modalForm}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 12 }}
+            onFinish={onFinish}
+          >
+            <Item label="Course" name="course">
+              <Select
+                showSearch
+                placeholder="Select course"
+                optionFilterProp="children"
+                filterOption={filterCourses}
+                options={map(courseList, (c:Course) => ({
+                  value: c.id,
+                  label: c.course_name.toUpperCase(),
+                }))}
+              />
+            </Item>
+            <Item label="Date" name="date">
+              <DatePicker
+                value={date}
+                style={{ width: '100%' }}
+                onChange={(newValue) => { if (newValue) date = newValue; }}
+              />
+            </Item>
+            <Item label="Time" name="time">
+              <TimePicker.RangePicker
+                format={hourFormat}
+                style={{ width: '100%' }}
+                onOk={(value) => {
+                  if (value && value[1] && value[0]) {
+                    setDuration(value[1].diff(value[0], 'minute'));
+                  }
+                }}
+              />
+            </Item>
+            <Item label="Students" name="students">
+              <Select
+                showSearch
+                mode="multiple"
+                placeholder="Select students"
+                optionFilterProp="children"
+                filterOption={filterStudents}
+                options={map(studentsList, (student:Student) => ({
+                  value: student.id,
+                  label: student.name,
+                }))}
+              />
+            </Item>
+            <Item label="Professor" name="professor">
+              <Select
+                showSearch
+                placeholder="Select a professor"
+                optionFilterProp="children"
+                filterOption={filterProfessors}
+                options={map(professorsList, (professor:Professor) => ({
+                  value: professor.id,
+                  label: professor.name,
+                }))}
+              />
+            </Item>
+            <Item label="Link" name="link">
+              <Input />
+            </Item>
+            <Item label="Description" name="description">
+              <Input />
+            </Item>
+          </Form>
+          {!multipleSchedules && schedules.length > 1 && (
+          <Button
+            onClick={() => {
+              setMultipleSchudules(true);
+            }}
+          >
+            Select another time
+          </Button>
+          )}
+        </>
         )}
         {showSucessResponse && (
         <Alert
@@ -225,6 +252,40 @@ const ModalSchedule: FC<scheduleModalProps> = ({
           type="error"
           showIcon
         />
+        )}
+
+        {(multipleSchedules && !showSucessResponse) && (
+          <>
+            <p>
+              The course
+              {' '}
+              {selectedEvent.content}
+              {' '}
+              is happening in
+              {' '}
+              {schedules.length}
+              {' '}
+              different hours
+            </p>
+            <p>Which of the following would you like to see?</p>
+            <Select
+              showSearch
+              placeholder="Select schedule"
+              optionFilterProp="children"
+              filterOption={filterCourses}
+              options={map(schedules, (schedule:Schedule) => ({
+                value: schedule.id,
+                label: schedule.starts, // TODO: Format hour
+              }))}
+              onChange={(value) => {
+                const foundSchedule = schedules.find((schedule) => schedule.id === value);
+                if (foundSchedule) {
+                  setSingleSchedule(foundSchedule);
+                  setMultipleSchudules(false);
+                }
+              }}
+            />
+          </>
         )}
       </Modal>
       )}

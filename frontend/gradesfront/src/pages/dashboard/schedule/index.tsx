@@ -40,7 +40,7 @@ const ScheduleClass: NextPage = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent>({} as CalendarEvent);
   const [schedulesData, setScheduleData] = useState<Schedule[]>([]);
-  const [singleSchedule, setSingleSchedule] = useState<Schedule>({} as Schedule);
+  const [foundSchedules, setFoundSchedules] = useState<Schedule[]>([]);
 
   const courseList: Course[] = useSelector(selectCourses);
   const studentsList: Student[] = useSelector(selectStudents);
@@ -83,6 +83,7 @@ const ScheduleClass: NextPage = () => {
       existingEntry.events.push({
         content: findCourse(schedule.course),
         type: 'default',
+        ...schedule,
       });
     } else {
       // Crea un nuevo grupo
@@ -91,6 +92,7 @@ const ScheduleClass: NextPage = () => {
         events: [{
           content: findCourse(schedule.course),
           type: 'default',
+          ...schedule,
         }],
       });
     }
@@ -105,14 +107,14 @@ const ScheduleClass: NextPage = () => {
     const event = selectedEvent?.content;
     if (event) {
       const foundSchedule = schedulesData
-        .find(
+        .filter(
           (schedule: Schedule) => dayjs(schedule.date).isSame(date, 'day')
           && findCourse(schedule.course).toLowerCase().includes(event?.toLowerCase()),
         );
 
-      setSingleSchedule(foundSchedule || {} as Schedule);
+      setFoundSchedules(foundSchedule || {} as Schedule[]);
     }
-  }, [schedulesData, date]);
+  }, [schedulesData, date, selectedEvent]);
 
   useEffect(() => {
     fetchSchedules();
@@ -134,6 +136,7 @@ const ScheduleClass: NextPage = () => {
                     <Button
                       key={Number(index)}
                       onClick={() => setSelectedEvent({
+                        ...eventData,
                         date: eventData.date,
                         content: item.content,
                       } as CalendarEvent)}
@@ -165,7 +168,7 @@ const ScheduleClass: NextPage = () => {
         professorsList={professorsList}
         hourFormat={formatHour}
         date={date}
-        schedule={singleSchedule}
+        schedules={foundSchedules}
         selectedEvent={selectedEvent}
       />
       )}
