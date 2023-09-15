@@ -26,7 +26,7 @@ import type {
 } from '../types';
 
 import { filterCourses, filterProfessors, filterStudents } from '../utils';
-import { URL_BACKEND } from '../constants';
+import { URL_BACKEND, formatDate } from '../constants';
 
 type scheduleModalProps = {
     handleCancel: () => void,
@@ -70,7 +70,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
       ...omit(values, 'time'),
       starts: formattedTime[0],
       ends: formattedTime[1],
-      date: date.format('YYYY-MM-DD'),
+      date: date.format(formatDate),
       duration,
     };
     // console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);

@@ -19,3 +19,6 @@ export const emptyUserInfo = {
   role: '',
   courses_enrolled: [],
 };
+
+export const formatDate = 'YYYY-MM-DD';
+export const formatHour = 'HH:mm';

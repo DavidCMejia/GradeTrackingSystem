@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/no-unstable-nested-components */
 
 import {
@@ -30,18 +29,16 @@ import type {
 } from '../../../types';
 
 import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
-import { URL_BACKEND } from '../../../constants';
+import { URL_BACKEND, formatHour } from '../../../constants';
 import ModalSchedule from '../../../components/modalSchedule';
 
 const ScheduleClass: NextPage = () => {
-  const hourFormat = 'HH:mm';
   const today = Date.now();
 
   const [date, setDate] = useState(() => dayjs(today));
   // console.log('🚀 ~ date:', date.format('YYYY-MM-DD'));
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent>({} as CalendarEvent);
-  console.log('🚀 ~ selectedEvent:', selectedEvent);
   const [schedulesData, setScheduleData] = useState<Schedule[]>([]);
   const [singleSchedule, setSingleSchedule] = useState<Schedule>({} as Schedule);
 
@@ -74,7 +71,10 @@ const ScheduleClass: NextPage = () => {
     return '';
   };
 
-  const dynamicCalendarData = schedulesData.reduce((accumulator: CalendarEvent[], schedule) => {
+  const dynamicCalendarData = schedulesData.reduce((
+    accumulator: CalendarEvent[],
+    schedule,
+  ) => {
     const day = schedule.date;
     const existingEntry = accumulator.find((entry) => entry.date === day);
 
@@ -128,7 +128,7 @@ const ScheduleClass: NextPage = () => {
           if (info.type === 'date') {
             const eventData = dynamicCalendarData.find((item) => dayjs(item.date).isSame(current, 'day'));
             return eventData ? (
-              <ul className="events" style={{ listStyleType: 'none' }}>
+              <div>
                 {eventData.events.map((item, index) => (
                   <>
                     <Button
@@ -144,10 +144,9 @@ const ScheduleClass: NextPage = () => {
                       />
                     </Button>
                     <br />
-
                   </>
                 ))}
-              </ul>
+              </div>
             ) : null;
           }
           return info.originNode;
@@ -164,7 +163,7 @@ const ScheduleClass: NextPage = () => {
         studentsList={studentsList}
         courseList={courseList}
         professorsList={professorsList}
-        hourFormat={hourFormat}
+        hourFormat={formatHour}
         date={date}
         schedule={singleSchedule}
         selectedEvent={selectedEvent}
