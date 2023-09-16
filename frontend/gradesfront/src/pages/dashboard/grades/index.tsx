@@ -29,31 +29,26 @@ import axios from 'axios';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import Add from '@mui/icons-material/Add';
 
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
 import type {
-  Course, Grade, Professor, Student,
+  Course, Grade, Student,
 } from '../../../types';
 
-import ModalStudents from '../../../components/modalStudents';
-import ModalEditCourse from '../../../components/modalEditCourse';
-import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
+import { selectCourses, selectStudents } from '../../../selectors/mainSelectors';
+import ModalEditGrade from '../../../components/modalEditGrade';
 
 const Grades: NextPage = () => {
   const [gradesData, setGradesData] = useState<Grade[]>();
-  const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedGrade, setSelectedGrade] = useState<Grade>();
-  const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
 
   const studentsList: Student[] = useSelector(selectStudents);
-  const professorsList: Professor[] = useSelector(selectProfessors);
   const courseList: Course[] = useSelector(selectCourses);
 
   const { push, asPath } = useRouter();
@@ -72,7 +67,7 @@ const Grades: NextPage = () => {
   const success = () => {
     messageApi.open({
       type: 'success',
-      content: 'Course deleted successfully',
+      content: 'Grade deleted successfully',
       className: 'custom-class',
       style: {
         marginTop: '20vh',
@@ -97,7 +92,7 @@ const Grades: NextPage = () => {
   };
 
   const handleDeleteClick = (row: Grade) => {
-    axios.delete(`${URL_BACKEND}/api/courses/${row.id}/`)
+    axios.delete(`${URL_BACKEND}/api/grades/${row.id}/`)
       .then((res) => {
         if (res && res.status === 204) {
           success();
@@ -106,11 +101,6 @@ const Grades: NextPage = () => {
         return null;
       })
       .catch((e) => message.error(e.toString()));
-  };
-
-  const viewStudents = (sIds: number[]) => {
-    setStudentsIds(sIds);
-    setOpenStudentModal(true);
   };
 
   useEffect(() => {
@@ -193,25 +183,16 @@ const Grades: NextPage = () => {
         </Table>
       </TableContainer>
 
-      {/* {studentsList && (
-        <ModalStudents
-          handleOpen={openStudentModal}
-          handleCancel={() => setOpenStudentModal(false)}
-          studentsList={studentsList}
-          studentsIds={studentsIds}
-        />
-      )}
-
-      {selectedGrade && professorsList && studentsList && (
-      <ModalEditCourse
+      {selectedGrade && studentsList && (
+      <ModalEditGrade
         handleOpen={openEditModal}
         handleCancel={() => setOpenEditModal(false)}
         refresh={fetchGrades}
-        course={selectedGrade}
-        professorsList={professorsList}
+        gradeInfo={selectedGrade}
         studentsList={studentsList}
+        courseList={courseList}
       />
-      )} */}
+      )}
 
     </>
   );
