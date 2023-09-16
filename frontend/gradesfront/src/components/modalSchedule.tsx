@@ -29,7 +29,7 @@ import type {
 } from '../types';
 
 import { filterCourses, filterProfessors, filterStudents } from '../utils';
-import { URL_BACKEND, formatDate } from '../constants';
+import { URL_BACKEND, formatDate, formatHour } from '../constants';
 
 type scheduleModalProps = {
     handleCancel: () => void,
@@ -46,14 +46,14 @@ type scheduleModalProps = {
 
 const { Item } = Form;
 const ModalSchedule: FC<scheduleModalProps> = ({
-  handleOpen,
   handleCancel,
+  refresh,
+  handleOpen,
+  schedules,
   professorsList,
   studentsList,
   courseList,
-  schedules,
   date,
-  refresh,
   hourFormat,
   selectedEvent,
 }) => {
@@ -275,7 +275,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
               filterOption={filterCourses}
               options={map(schedules, (schedule:Schedule) => ({
                 value: schedule.id,
-                label: schedule.starts, // TODO: Format hour
+                label: dayjs(schedule.starts, 'HH:mm:ss').format(formatHour),
               }))}
               onChange={(value) => {
                 const foundSchedule = schedules.find((schedule) => schedule.id === value);

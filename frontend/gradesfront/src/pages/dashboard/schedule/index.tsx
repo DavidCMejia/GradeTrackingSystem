@@ -79,14 +79,14 @@ const ScheduleClass: NextPage = () => {
     const existingEntry = accumulator.find((entry) => entry.date === day);
 
     if (existingEntry) {
-      // Agrega el evento al grupo existente
+      // Adds a new event to an existing group
       existingEntry.events.push({
         content: findCourse(schedule.course),
         type: 'default',
         ...schedule,
       });
     } else {
-      // Crea un nuevo grupo
+      // Creates a new group
       accumulator.push({
         date: day,
         events: [{
