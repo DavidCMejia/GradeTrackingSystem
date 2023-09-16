@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { Course } from '../types';
+import type { Course } from '../../types';
 
 const initialState: Course[] = [];
 

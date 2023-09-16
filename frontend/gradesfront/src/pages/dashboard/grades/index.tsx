@@ -38,7 +38,7 @@ import type {
   Course, Grade, Student,
 } from '../../../types';
 
-import { selectCourses, selectStudents } from '../../../selectors/mainSelectors';
+import { selectCourses, selectStudents } from '../../../redux/selectors/mainSelectors';
 import ModalEditGrade from '../../../components/modalEditGrade';
 
 const Grades: NextPage = () => {

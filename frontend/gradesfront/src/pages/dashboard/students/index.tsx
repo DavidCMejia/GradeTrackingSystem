@@ -38,7 +38,7 @@ import type { Course, Student } from '../../../types';
 
 import ModalCourses from '../../../components/modalCourses';
 import ModalEditStudent from '../../../components/modalEditStudent';
-import { selectCourses } from '../../../selectors/mainSelectors';
+import { selectCourses } from '../../../redux/selectors/mainSelectors';
 
 const Courses: NextPage = () => {
   const [studentsData, setStudentsData] = useState<Student[]>();

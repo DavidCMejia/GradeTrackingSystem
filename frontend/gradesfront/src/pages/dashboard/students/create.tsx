@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { URL_BACKEND, roleOptionsSelect } from '../../../constants';
 import type { Course, Student } from '../../../types';
-import { selectCourses } from '../../../selectors/mainSelectors';
+import { selectCourses } from '../../../redux/selectors/mainSelectors';
 import { filterCourses } from '../../../utils';
 
 const { Item } = Form;

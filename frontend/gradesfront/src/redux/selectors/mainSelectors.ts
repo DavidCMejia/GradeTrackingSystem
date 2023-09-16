@@ -1,6 +1,4 @@
-import { RootState } from '../store';
-
-export const selectCounter = (state: RootState) => state.counter.value;
+import { RootState } from '../../store';
 
 export const selectUser = (state: RootState) => state.user;
 

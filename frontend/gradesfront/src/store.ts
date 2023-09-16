@@ -2,11 +2,10 @@ import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
-import counterReducer from './slices/counterSlice';
-import userReducer from './slices/userSlice';
-import studentsReducer from './slices/studentsSlice';
-import professorsReducer from './slices/professorsSlice';
-import coursesReducer from './slices/coursesSlice';
+import userReducer from './redux/slices/userSlice';
+import studentsReducer from './redux/slices/studentsSlice';
+import professorsReducer from './redux/slices/professorsSlice';
+import coursesReducer from './redux/slices/coursesSlice';
 
 const persistConfig = {
   key: 'root',
@@ -14,7 +13,6 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  counter: counterReducer,
   user: userReducer,
   students: studentsReducer,
   professors: professorsReducer,

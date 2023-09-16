@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { Professor, Student } from '../types';
+import type { Professor, Student } from '../../types';
 
 type UserState = Professor | Student;
 
 const initialState: UserState = {
-  id: '',
+  id: 0,
   identification_number: '',
   name: '',
   email: '',
@@ -27,7 +27,7 @@ export const userSlice = createSlice({
       state.courses_enrolled = action.payload.courses_enrolled;
     },
     clearUser: (state) => {
-      state.id = '';
+      state.id = 0;
       state.identification_number = '';
       state.name = '';
       state.email = '';

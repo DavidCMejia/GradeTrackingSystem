@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
-import { selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
+import { selectProfessors, selectStudents } from '../../../redux/selectors/mainSelectors';
 import { filterProfessors, filterStudents } from '../../../utils';
 
 const { Item } = Form;

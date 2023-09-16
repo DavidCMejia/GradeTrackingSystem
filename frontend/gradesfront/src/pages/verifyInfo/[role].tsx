@@ -22,7 +22,7 @@ import type { Professor, Student } from '../../types';
 
 import { URL_BACKEND, roles } from '../../constants';
 import { parseError } from '../../utils';
-import { setUser } from '../../slices/userSlice';
+import { setUser } from '../../redux/slices/userSlice';
 
 const VerifyInfo: NextPage = () => {
   const { query, push } = useRouter();
@@ -75,7 +75,7 @@ const VerifyInfo: NextPage = () => {
           }
           return null;
         })
-        .catch((e) => message.error(e.toString()));
+        .catch(() => message.info('You have not verified your information yet'));
     }
   }, [user, query]);
 

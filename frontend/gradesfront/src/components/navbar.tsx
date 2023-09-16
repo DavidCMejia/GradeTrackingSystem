@@ -21,7 +21,7 @@ import { useDispatch } from 'react-redux';
 
 import Link from 'next/link';
 
-import { setUser } from '../slices/userSlice';
+import { setUser } from '../redux/slices/userSlice';
 import { emptyUserInfo } from '../constants';
 
 import styles from '../styles/navbar.module.css';

@@ -13,11 +13,11 @@ import axios from 'axios';
 import { isEmpty } from 'lodash';
 import { message } from 'antd';
 import { useEffect } from 'react';
-import { selectUser } from '../../selectors/mainSelectors';
+import { selectUser } from '../../redux/selectors/mainSelectors';
 
-import { setStudents } from '../../slices/studentsSlice';
-import { setProfessors } from '../../slices/professorsSlice';
-import { setCourses } from '../../slices/coursesSlice';
+import { setStudents } from '../../redux/slices/studentsSlice';
+import { setProfessors } from '../../redux/slices/professorsSlice';
+import { setCourses } from '../../redux/slices/coursesSlice';
 
 import { URL_BACKEND } from '../../constants';
 

@@ -28,7 +28,7 @@ import type {
   ValidStatus,
 } from '../../../types';
 
-import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
+import { selectCourses, selectProfessors, selectStudents } from '../../../redux/selectors/mainSelectors';
 import { URL_BACKEND, formatHour } from '../../../constants';
 import ModalSchedule from '../../../components/modalSchedule';
 

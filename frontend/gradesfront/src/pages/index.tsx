@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import WelcomeMessage from '../components/welcome';
 import { URL_BACKEND } from '../constants';
-import { selectUser } from '../selectors/mainSelectors';
+import { selectUser } from '../redux/selectors/mainSelectors';
 
 export default function Home() {
   const { user } = useUser();
