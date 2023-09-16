@@ -82,7 +82,11 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
         title="Update Student"
         open={handleOpen}
         onCancel={handleCancel}
-        onOk={modalForm.submit}
+        onOk={() => {
+          modalForm.validateFields()
+            .then(() => modalForm.submit())
+            .catch();
+        }}
       >
         {showSucessResponse && (
         <>
@@ -119,7 +123,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           <Item label="#" name="student_number" hidden>
             <Input />
           </Item>
-          <Item label="Identification" name="identification_number">
+          <Item label="Identification" name="identification_number" rules={[{ required: true }]}>
             <Input />
           </Item>
           <Item
@@ -128,14 +132,14 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           >
             <Input />
           </Item>
-          <Item label="Role" name="role">
+          <Item label="Role" name="role" rules={[{ required: true }]}>
             <Select
               placeholder="Select role"
               defaultValue={roleOptionsSelect[1]}
               options={roleOptionsSelect}
             />
           </Item>
-          <Item label="Email" name="email">
+          <Item label="Email" name="email" rules={[{ required: true }]}>
             <Input />
           </Item>
           <Item label="Courses" name="courses_enrolled">
