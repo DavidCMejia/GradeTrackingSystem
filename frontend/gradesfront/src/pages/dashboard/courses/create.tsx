@@ -39,7 +39,9 @@ const CreateCourse: NextPage = () => {
       message.error(error.toString());
     }
     form.resetFields();
-    push('/dashboard/courses');
+    setTimeout(() => {
+      push('/dashboard/courses');
+    }, 2500);
   };
 
   return (

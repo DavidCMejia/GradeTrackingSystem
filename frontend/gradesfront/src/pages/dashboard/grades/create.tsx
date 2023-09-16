@@ -8,21 +8,22 @@ import { map } from 'lodash';
 import { TableContainer, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { URL_BACKEND, roleOptionsSelect } from '../../../constants';
-import type { Course, Student } from '../../../types';
-import { selectCourses } from '../../../selectors/mainSelectors';
-import { filterCourses } from '../../../utils';
+import { URL_BACKEND } from '../../../constants';
+import type { Course, Grade, Student } from '../../../types';
+import { selectCourses, selectStudents } from '../../../selectors/mainSelectors';
+import { filterCourses, filterStudents } from '../../../utils';
 
 const { Item } = Form;
-const CreateStudent: NextPage = () => {
+const CreateGrade: NextPage = () => {
   const [form] = Form.useForm();
   const { push } = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
+  const studentsList: Student[] = useSelector(selectStudents);
   const courseList: Course[] = useSelector(selectCourses);
   const success = () => {
     messageApi.open({
       type: 'success',
-      content: 'Student created successfully',
+      content: 'Course created successfully',
       className: 'custom-class',
       style: {
         marginTop: '20vh',
@@ -30,16 +31,16 @@ const CreateStudent: NextPage = () => {
     });
   };
 
-  const onFinish = async (values: Student) => {
+  const onFinish = async (values: Grade) => {
     try {
-      const res = await axios.post(`${URL_BACKEND}/api/students/`, values);
+      const res = await axios.post(`${URL_BACKEND}/api/grades/`, values);
       if (res && res.status === 201) success();
     } catch (error: any) {
       message.error(error.toString());
     }
     form.resetFields();
     setTimeout(() => {
-      push('/dashboard/students');
+      push('/dashboard/grades');
     }, 2500);
   };
 
@@ -54,7 +55,7 @@ const CreateStudent: NextPage = () => {
       {contextHolder}
       <br />
       <Typography variant="h4" align="center" gutterBottom>
-        Create Student
+        Create Grade
       </Typography>
       <br />
       <Form
@@ -65,32 +66,9 @@ const CreateStudent: NextPage = () => {
         <Item label="id" name="id" hidden>
           <Input />
         </Item>
-        <Item label="#" name="student_number" hidden>
-          <Input />
-        </Item>
-        <Item label="Identification" name="identification_number" rules={[{ required: true }]}>
-          <Input />
-        </Item>
-        <Item
-          label="Name"
-          name="name"
-        >
-          <Input />
-        </Item>
-        <Item label="Role" name="role">
-          <Select
-            placeholder="Select role"
-            defaultValue={roleOptionsSelect[1]}
-            options={roleOptionsSelect}
-          />
-        </Item>
-        <Item label="Email" name="email" rules={[{ required: true }]}>
-          <Input />
-        </Item>
-        <Item label="Courses" name="courses_enrolled">
+        <Item label="Course" name="course" rules={[{ required: true }]}>
           <Select
             showSearch
-            mode="multiple"
             placeholder="Select course"
             optionFilterProp="children"
             filterOption={filterCourses}
@@ -99,6 +77,21 @@ const CreateStudent: NextPage = () => {
               label: course.course_name.toUpperCase(),
             }))}
           />
+        </Item>
+        <Item label="Student" name="student" rules={[{ required: true }]}>
+          <Select
+            showSearch
+            placeholder="Select student"
+            optionFilterProp="children"
+            filterOption={filterStudents}
+            options={map(studentsList, (student:Student) => ({
+              value: student.id,
+              label: student.name,
+            }))}
+          />
+        </Item>
+        <Item label="Grade" name="grade" rules={[{ required: true }]}>
+          <Input />
         </Item>
         <Item wrapperCol={{ offset: 8, span: 12 }}>
           <Button type="primary" htmlType="submit">
@@ -111,4 +104,4 @@ const CreateStudent: NextPage = () => {
   );
 };
 
-export default CreateStudent;
+export default CreateGrade;
