@@ -16,6 +16,14 @@ export type Student = MainInfo & {
     courses_enrolled: number[],
 }
 
+export type Grade = {
+    id?: number,
+    uuid: string,
+    student: number,
+    course: number,
+    grade: number,
+}
+
 export type Course = {
     id: number,
     uuid?: string,

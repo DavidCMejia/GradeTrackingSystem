@@ -35,37 +35,40 @@ import Add from '@mui/icons-material/Add';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
-import type { Course, Professor, Student } from '../../../types';
+import type { Course, Grade, Professor, Student } from '../../../types';
 
 import ModalStudents from '../../../components/modalStudents';
 import ModalEditCourse from '../../../components/modalEditCourse';
-import { selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
+import { selectCourses, selectProfessors, selectStudents } from '../../../selectors/mainSelectors';
 
-const Courses: NextPage = () => {
-  const [coursesData, setCoursesData] = useState<Course[]>();
+const Grades: NextPage = () => {
+  const [gradesData, setGradesData] = useState<Grade[]>();
+  console.log('🚀 ~ gradesData:', gradesData);
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [selectedCourse, setSelectedCourse] = useState<Course>();
+  const [selectedGrade, setSelectedGrade] = useState<Grade>();
   const [studentsIds, setStudentsIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
 
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
+  const courseList: Course[] = useSelector(selectCourses);
+  console.log('🚀 ~ courseList:', courseList);
 
   const { push, asPath } = useRouter();
 
-  const sortedCoursesData = orderBy(coursesData, 'course_code', 'asc');
+  const sortedCoursesData = orderBy(gradesData, 'course_code', 'asc');
   const searchTextLower = searchText.toLowerCase();
-  const filteredData: Course[] = sortedCoursesData
+  const filteredData: Grade[] = sortedCoursesData
     .filter(
       ({
-        course_name,
-        course_code,
-        professor,
-      }) => course_name.toLowerCase().includes(searchTextLower)
-    || course_code.toLowerCase().includes(searchTextLower)
-    || professor.toString().toLowerCase().includes(searchTextLower),
+        grade,
+        student,
+        course,
+      }) => grade.toString().includes(searchTextLower)
+    || student.toString().includes(searchTextLower)
+    || course.toString().includes(searchTextLower),
     );
 
   const success = () => {
@@ -79,28 +82,28 @@ const Courses: NextPage = () => {
     });
   };
 
-  const fetchCourses = () => {
-    axios.get(`${URL_BACKEND}/api/courses/`)
+  const fetchGrades = () => {
+    axios.get(`${URL_BACKEND}/api/grades/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
-          setCoursesData(res.data);
+          setGradesData(res.data);
         }
         return null;
       })
       .catch((e) => message.error(e.toString()));
   };
 
-  const handleEditClick = (row: Course) => {
+  const handleEditClick = (row: Grade) => {
     setOpenEditModal(true);
-    setSelectedCourse(row);
+    setSelectedGrade(row);
   };
 
-  const handleDeleteClick = (row: Course) => {
+  const handleDeleteClick = (row: Grade) => {
     axios.delete(`${URL_BACKEND}/api/courses/${row.id}/`)
       .then((res) => {
         if (res && res.status === 204) {
           success();
-          fetchCourses();
+          fetchGrades();
         }
         return null;
       })
@@ -113,10 +116,10 @@ const Courses: NextPage = () => {
   };
 
   useEffect(() => {
-    fetchCourses();
+    fetchGrades();
   }, []);
 
-  if (isEmpty(coursesData)) {
+  if (isEmpty(gradesData)) {
     return (
       <Typography variant="h3" align="center" gutterBottom>
         <CircularProgress />
@@ -136,7 +139,7 @@ const Courses: NextPage = () => {
   return (
     <>
       <Typography variant="h4" align="center" gutterBottom>
-        Courses
+        Grades
         <br />
         <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
         <br />
@@ -161,33 +164,29 @@ const Courses: NextPage = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={rowTitleStyle}>Code</TableCell>
               <TableCell style={rowTitleStyle}>id</TableCell>
-              <TableCell style={rowTitleStyle}>Name</TableCell>
-              <TableCell style={rowTitleStyle}>Professor</TableCell>
-              <TableCell style={rowTitleStyle}>Students</TableCell>
+              <TableCell style={rowTitleStyle}>Course</TableCell>
+              <TableCell style={rowTitleStyle}>Student</TableCell>
+              <TableCell style={rowTitleStyle}>Grade</TableCell>
               <TableCell style={rowTitleStyle}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData && map(filteredData, (course) => {
-              const foundProfessor = professorsList
-              && find(professorsList, { id: course.professor });
+            {filteredData && map(filteredData, (grade) => {
+              const foundStudent = studentsList
+              && find(studentsList, { id: grade.student });
+              const foundCourse = courseList
+              && find(courseList, { id: grade.course });
 
               return (
-                <TableRow key={course.id}>
-                  <TableCell style={centerRowStyle}>{course.course_code}</TableCell>
-                  <TableCell style={centerRowStyle}>{course.id}</TableCell>
-                  <TableCell style={centerRowStyle}>{course.course_name.toUpperCase()}</TableCell>
-                  <TableCell style={centerRowStyle}>{get(foundProfessor, 'name')}</TableCell>
+                <TableRow key={grade.id}>
+                  <TableCell style={centerRowStyle}>{grade.id}</TableCell>
+                  <TableCell style={centerRowStyle}>{get(foundCourse, 'course_name')?.toUpperCase()}</TableCell>
+                  <TableCell style={centerRowStyle}>{get(foundStudent, 'name')}</TableCell>
+                  <TableCell style={centerRowStyle}>{grade.grade}</TableCell>
                   <TableCell style={centerRowStyle}>
-                    <Button onClick={() => viewStudents(course.students)}>
-                      <VisibilityIcon />
-                    </Button>
-                  </TableCell>
-                  <TableCell style={centerRowStyle}>
-                    <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
-                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(course)}><DeleteIcon /></Button>
+                    <Button variant="outlined" onClick={() => handleEditClick(grade)}><EditIcon /></Button>
+                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(grade)}><DeleteIcon /></Button>
                   </TableCell>
                 </TableRow>
               );
@@ -196,7 +195,7 @@ const Courses: NextPage = () => {
         </Table>
       </TableContainer>
 
-      {studentsList && (
+      {/* {studentsList && (
         <ModalStudents
           handleOpen={openStudentModal}
           handleCancel={() => setOpenStudentModal(false)}
@@ -205,19 +204,19 @@ const Courses: NextPage = () => {
         />
       )}
 
-      {selectedCourse && professorsList && studentsList && (
+      {selectedGrade && professorsList && studentsList && (
       <ModalEditCourse
         handleOpen={openEditModal}
         handleCancel={() => setOpenEditModal(false)}
-        refresh={fetchCourses}
-        course={selectedCourse}
+        refresh={fetchGrades}
+        course={selectedGrade}
         professorsList={professorsList}
         studentsList={studentsList}
       />
-      )}
+      )} */}
 
     </>
   );
 };
 
-export default Courses;
+export default Grades;
