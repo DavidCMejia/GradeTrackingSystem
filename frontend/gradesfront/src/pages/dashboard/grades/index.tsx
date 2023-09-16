@@ -35,7 +35,9 @@ import Add from '@mui/icons-material/Add';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { URL_BACKEND } from '../../../constants';
-import type { Course, Grade, Professor, Student } from '../../../types';
+import type {
+  Course, Grade, Professor, Student,
+} from '../../../types';
 
 import ModalStudents from '../../../components/modalStudents';
 import ModalEditCourse from '../../../components/modalEditCourse';
@@ -43,7 +45,6 @@ import { selectCourses, selectProfessors, selectStudents } from '../../../select
 
 const Grades: NextPage = () => {
   const [gradesData, setGradesData] = useState<Grade[]>();
-  console.log('🚀 ~ gradesData:', gradesData);
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedGrade, setSelectedGrade] = useState<Grade>();
@@ -54,22 +55,19 @@ const Grades: NextPage = () => {
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
   const courseList: Course[] = useSelector(selectCourses);
-  console.log('🚀 ~ courseList:', courseList);
 
   const { push, asPath } = useRouter();
 
-  const sortedCoursesData = orderBy(gradesData, 'course_code', 'asc');
+  const sortedCoursesData = orderBy(gradesData, 'student', 'asc');
   const searchTextLower = searchText.toLowerCase();
+
   const filteredData: Grade[] = sortedCoursesData
-    .filter(
-      ({
-        grade,
-        student,
-        course,
-      }) => grade.toString().includes(searchTextLower)
-    || student.toString().includes(searchTextLower)
-    || course.toString().includes(searchTextLower),
-    );
+    .filter(({ student, course }) => {
+      const foundStudent = studentsList.find((studentItem) => studentItem.id === student);
+      const foundCourse = courseList.find((courseItem) => courseItem.id === course);
+      return foundStudent?.name.toLowerCase().includes(searchTextLower)
+      || foundCourse?.course_name.toLowerCase().includes(searchTextLower);
+    });
 
   const success = () => {
     messageApi.open({
@@ -164,7 +162,7 @@ const Grades: NextPage = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={rowTitleStyle}>id</TableCell>
+              {/* <TableCell style={rowTitleStyle}>id</TableCell> */}
               <TableCell style={rowTitleStyle}>Course</TableCell>
               <TableCell style={rowTitleStyle}>Student</TableCell>
               <TableCell style={rowTitleStyle}>Grade</TableCell>
@@ -180,7 +178,7 @@ const Grades: NextPage = () => {
 
               return (
                 <TableRow key={grade.id}>
-                  <TableCell style={centerRowStyle}>{grade.id}</TableCell>
+                  {/* <TableCell style={centerRowStyle}>{grade.id}</TableCell> */}
                   <TableCell style={centerRowStyle}>{get(foundCourse, 'course_name')?.toUpperCase()}</TableCell>
                   <TableCell style={centerRowStyle}>{get(foundStudent, 'name')}</TableCell>
                   <TableCell style={centerRowStyle}>{grade.grade}</TableCell>
