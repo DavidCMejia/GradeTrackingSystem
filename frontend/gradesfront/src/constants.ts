@@ -12,7 +12,7 @@ export const roleOptionsSelect = map(roles, (label, value) => ({
 }));
 
 export const emptyUserInfo = {
-  id: '',
+  id: 0,
   identification_number: '',
   name: '',
   email: '',
