@@ -142,7 +142,7 @@ const ScheduleClass: NextPage = () => {
                       } as CalendarEvent)}
                     >
                       <Badge
-                        status={item.type ? item.type as ValidStatus : 'default'} // Usa 'default' si 'type' no está presente
+                        status={item.type ? item.type as ValidStatus : 'default'}
                         text={item.content}
                       />
                     </Button>

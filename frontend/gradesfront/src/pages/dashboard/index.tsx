@@ -2,18 +2,23 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { Paper, Grid, Typography } from '@mui/material';
+
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import TodayIcon from '@mui/icons-material/Today';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import GradingIcon from '@mui/icons-material/Grading';
+
+import axios from 'axios';
+
 import { isEmpty } from 'lodash';
 import { message } from 'antd';
-import axios from 'axios';
 import { useEffect } from 'react';
 import { selectUser } from '../../selectors/mainSelectors';
 
 import { setStudents } from '../../slices/studentsSlice';
 import { setProfessors } from '../../slices/professorsSlice';
 import { setCourses } from '../../slices/coursesSlice';
+
 import { URL_BACKEND } from '../../constants';
 
 const Dashboard: NextPage = () => {
@@ -86,7 +91,7 @@ const Dashboard: NextPage = () => {
               <Typography textAlign="center" fontSize={25}>
                 <AutoStoriesIcon fontSize="large" />
                 <br />
-                Create Course
+                Courses
               </Typography>
             </Paper>
           </Grid>
@@ -102,7 +107,7 @@ const Dashboard: NextPage = () => {
               <Typography textAlign="center" fontSize={25}>
                 <PermContactCalendarIcon fontSize="large" />
                 <br />
-                Create Student
+                Students
               </Typography>
             </Paper>
           </Grid>
@@ -118,7 +123,23 @@ const Dashboard: NextPage = () => {
               <Typography textAlign="center" fontSize={25}>
                 <TodayIcon fontSize="large" />
                 <br />
-                Schedule Class
+                Schedule
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid key="grades" item>
+            <Paper
+              sx={{
+                p: 2,
+                height: 140,
+                width: 100,
+              }}
+              onClick={() => push('/dashboard/grades')}
+            >
+              <Typography textAlign="center" fontSize={25}>
+                <GradingIcon fontSize="large" />
+                <br />
+                Grades
               </Typography>
             </Paper>
           </Grid>

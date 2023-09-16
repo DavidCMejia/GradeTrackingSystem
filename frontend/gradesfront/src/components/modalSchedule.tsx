@@ -57,6 +57,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
   hourFormat,
   selectedEvent,
 }) => {
+  // console.log('🚀 ~ date:', date.format('YYYY-MM-DD'));
   const [modalForm] = Form.useForm();
   const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
   const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
@@ -78,26 +79,25 @@ const ModalSchedule: FC<scheduleModalProps> = ({
       duration,
     };
     // console.log('🚀 ~ valuesToSubmit:', valuesToSubmit);
-    if (!isEmpty(singleSchedule)) {
-      try {
-        const res = httpMethod === 'PUT'
-          ? await axios.put(`${URL_BACKEND}/api/schedules/${singleSchedule.id}/`, valuesToSubmit)
-          : await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
+    try {
+      const res = httpMethod === 'PUT'
+        ? !isEmpty(singleSchedule)
+        && await axios.put(`${URL_BACKEND}/api/schedules/${singleSchedule.id}/`, valuesToSubmit)
+        : await axios.post(`${URL_BACKEND}/api/schedules/`, valuesToSubmit);
 
-        if (res && (res.status === 201 || res.status === 200)) {
-          setShowSucessResponse(true);
-          setTimeout(() => {
-            setShowSucessResponse(false);
-          }, 3000);
-          refresh();
-        }
-      } catch (error: any) {
-        setErrorResponse(error.message);
-        setShowFailureResponse(true);
+      if (res && (res.status === 201 || res.status === 200)) {
+        setShowSucessResponse(true);
         setTimeout(() => {
-          setShowFailureResponse(false);
-        }, 4000);
+          setShowSucessResponse(false);
+        }, 3000);
+        refresh();
       }
+    } catch (error: any) {
+      setErrorResponse(error.message);
+      setShowFailureResponse(true);
+      setTimeout(() => {
+        setShowFailureResponse(false);
+      }, 4000);
     }
   };
 
@@ -127,10 +127,10 @@ const ModalSchedule: FC<scheduleModalProps> = ({
         time: ([formmatedStart, formmatedEnd]),
       });
 
+      modalForm.setFieldsValue({ date });
       if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
     }
-    modalForm.setFieldsValue({ date });
-  }, [singleSchedule, selectedEvent]);
+  }, [singleSchedule, selectedEvent, date]);
 
   useEffect(() => {
     if (!handleOpen) setHttpMethod(''); modalForm.resetFields();
@@ -152,7 +152,11 @@ const ModalSchedule: FC<scheduleModalProps> = ({
         title={multipleSchedules ? 'Multiple Schedules' : 'Schedule Class'}
         open={handleOpen}
         onCancel={handleCancel}
-        onOk={modalForm.submit}
+        onOk={() => {
+          modalForm.validateFields()
+            .then(() => modalForm.submit())
+            .catch();
+        }}
         okText="Schedule"
         footer={multipleSchedules ? null : undefined}
       >
@@ -164,7 +168,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
             wrapperCol={{ span: 12 }}
             onFinish={onFinish}
           >
-            <Item label="Course" name="course">
+            <Item label="Course" name="course" rules={[{ required: true }]}>
               <Select
                 showSearch
                 placeholder="Select course"
@@ -178,12 +182,13 @@ const ModalSchedule: FC<scheduleModalProps> = ({
             </Item>
             <Item label="Date" name="date">
               <DatePicker
+                defaultValue={date}
                 value={date}
                 style={{ width: '100%' }}
                 onChange={(newValue) => { if (newValue) date = newValue; }}
               />
             </Item>
-            <Item label="Time" name="time">
+            <Item label="Time" name="time" rules={[{ required: true }]}>
               <TimePicker.RangePicker
                 format={hourFormat}
                 style={{ width: '100%' }}
@@ -194,7 +199,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
                 }}
               />
             </Item>
-            <Item label="Students" name="students">
+            <Item label="Students" name="students" rules={[{ required: true }]}>
               <Select
                 showSearch
                 mode="multiple"
@@ -207,7 +212,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
                 }))}
               />
             </Item>
-            <Item label="Professor" name="professor">
+            <Item label="Professor" name="professor" rules={[{ required: true }]}>
               <Select
                 showSearch
                 placeholder="Select a professor"
