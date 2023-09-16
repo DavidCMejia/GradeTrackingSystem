@@ -66,6 +66,17 @@ const Dashboard: NextPage = () => {
     fetchProfessors();
   }, []);
 
+  const paperStyles = {
+    p: 2,
+    height: 100,
+    width: 100,
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+    '&:hover': {
+      backgroundColor: 'lightgray',
+    },
+  };
+
   return (
     <>
       <br />
@@ -81,11 +92,7 @@ const Dashboard: NextPage = () => {
         <Grid container justifyContent="center" spacing={8} sx={{ p: 2 }}>
           <Grid key="course" item>
             <Paper
-              sx={{
-                p: 2,
-                height: 140,
-                width: 100,
-              }}
+              sx={paperStyles}
               onClick={() => push('/dashboard/courses')}
             >
               <Typography textAlign="center" fontSize={25}>
@@ -97,11 +104,7 @@ const Dashboard: NextPage = () => {
           </Grid>
           <Grid key="student" item>
             <Paper
-              sx={{
-                p: 2,
-                height: 140,
-                width: 100,
-              }}
+              sx={paperStyles}
               onClick={() => push('/dashboard/students')}
             >
               <Typography textAlign="center" fontSize={25}>
@@ -113,11 +116,7 @@ const Dashboard: NextPage = () => {
           </Grid>
           <Grid key="schedule" item>
             <Paper
-              sx={{
-                p: 2,
-                height: 140,
-                width: 100,
-              }}
+              sx={paperStyles}
               onClick={() => push('/dashboard/schedule')}
             >
               <Typography textAlign="center" fontSize={25}>
@@ -129,11 +128,7 @@ const Dashboard: NextPage = () => {
           </Grid>
           <Grid key="grades" item>
             <Paper
-              sx={{
-                p: 2,
-                height: 140,
-                width: 100,
-              }}
+              sx={paperStyles}
               onClick={() => push('/dashboard/grades')}
             >
               <Typography textAlign="center" fontSize={25}>
