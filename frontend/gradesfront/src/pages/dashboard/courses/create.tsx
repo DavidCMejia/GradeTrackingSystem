@@ -68,13 +68,10 @@ const CreateCourse: NextPage = () => {
         <Item label="Code" name="course_code">
           <Input placeholder="101" />
         </Item>
-        <Item
-          label="Name"
-          name="course_name"
-        >
+        <Item label="Name" name="course_name" rules={[{ required: true }]}>
           <Input />
         </Item>
-        <Item label="Professor" name="professor">
+        <Item label="Professor" name="professor" rules={[{ required: true }]}>
           <Select
             showSearch
             placeholder="Select a professor"

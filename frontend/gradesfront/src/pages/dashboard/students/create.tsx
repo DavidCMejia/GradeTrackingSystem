@@ -66,7 +66,7 @@ const CreateStudent: NextPage = () => {
         <Item label="#" name="student_number" hidden>
           <Input />
         </Item>
-        <Item label="Identification" name="identification_number">
+        <Item label="Identification" name="identification_number" rules={[{ required: true }]}>
           <Input />
         </Item>
         <Item
@@ -82,7 +82,7 @@ const CreateStudent: NextPage = () => {
             options={roleOptionsSelect}
           />
         </Item>
-        <Item label="Email" name="email">
+        <Item label="Email" name="email" rules={[{ required: true }]}>
           <Input />
         </Item>
         <Item label="Courses" name="courses_enrolled">
