@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable camelcase */
 import { NextPage } from 'next';
 import {
@@ -31,15 +32,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Add from '@mui/icons-material/Add';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { URL_BACKEND } from '../../../constants';
+import { PROFESSOR_ROLE, STUDENT_ROLE, URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
 
 import ModalStudents from '../../../components/modalStudents';
 import ModalEditCourse from '../../../components/modalEditCourse';
-import { selectProfessors, selectStudents } from '../../../redux/selectors/mainSelectors';
+import { selectProfessors, selectStudents, selectUser } from '../../../redux/selectors/mainSelectors';
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
@@ -52,7 +55,7 @@ const Courses: NextPage = () => {
 
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
-
+  const userRedux = useSelector(selectUser);
   const { push, asPath } = useRouter();
 
   const sortedCoursesData = orderBy(coursesData, 'course_code', 'asc');
@@ -68,10 +71,10 @@ const Courses: NextPage = () => {
     || professor.toString().toLowerCase().includes(searchTextLower),
     );
 
-  const success = () => {
+  const success = (actionType: string) => {
     messageApi.open({
       type: 'success',
-      content: 'Course deleted successfully',
+      content: `Course ${actionType} successfully`,
       className: 'custom-class',
       style: {
         marginTop: '20vh',
@@ -90,6 +93,35 @@ const Courses: NextPage = () => {
       .catch((e) => message.error(e.toString()));
   };
 
+  const handleEnrollClick = (row: Course) => {
+    axios.patch(`${URL_BACKEND}/api/courses/${row.id}/`, {
+      students: [...row.students, userRedux.id],
+    })
+      .then((res) => {
+        if (res && res.status === 200) {
+          success('enrolled');
+          fetchCourses();
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
+  const handleUnenrollClick = (row: Course) => {
+    const removeStudent = row.students.filter((student) => student !== userRedux.id);
+    axios.patch(`${URL_BACKEND}/api/courses/${row.id}/`, {
+      students: removeStudent,
+    })
+      .then((res) => {
+        if (res && res.status === 200) {
+          success('Unenrolled');
+          fetchCourses();
+        }
+        return null;
+      })
+      .catch((e) => message.error(e.toString()));
+  };
+
   const handleEditClick = (row: Course) => {
     setOpenEditModal(true);
     setSelectedCourse(row);
@@ -99,7 +131,7 @@ const Courses: NextPage = () => {
     axios.delete(`${URL_BACKEND}/api/courses/${row.id}/`)
       .then((res) => {
         if (res && res.status === 204) {
-          success();
+          success('deleted');
           fetchCourses();
         }
         return null;
@@ -138,7 +170,9 @@ const Courses: NextPage = () => {
       <Typography variant="h4" align="center" gutterBottom>
         Courses
         <br />
+        {userRedux.role === PROFESSOR_ROLE && (
         <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
+        )}
         <br />
         <TextField
           label="Search"
@@ -166,7 +200,7 @@ const Courses: NextPage = () => {
               <TableCell style={rowTitleStyle}>Name</TableCell>
               <TableCell style={rowTitleStyle}>Professor</TableCell>
               <TableCell style={rowTitleStyle}>Students</TableCell>
-              <TableCell style={rowTitleStyle}>Actions</TableCell>
+              <TableCell style={rowTitleStyle}>{userRedux.role === PROFESSOR_ROLE ? 'Action' : 'Enroll'}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -186,8 +220,24 @@ const Courses: NextPage = () => {
                     </Button>
                   </TableCell>
                   <TableCell style={centerRowStyle}>
-                    <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
-                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(course)}><DeleteIcon /></Button>
+                    {userRedux.role === PROFESSOR_ROLE && (
+                    <>
+                      <Button variant="outlined" onClick={() => handleEditClick(course)}><EditIcon /></Button>
+                      <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(course)}><DeleteIcon /></Button>
+                    </>
+                    )}
+                    {userRedux.role === STUDENT_ROLE && (
+                      <>
+                        {userRedux.id && course.students.includes(userRedux.id) ? (
+                        // studentEnrolled
+                          <Button variant="outlined" onClick={() => handleUnenrollClick(course)}><CheckCircleIcon /></Button>
+                        ) : (
+                        // studentNotEnrolled
+                          <Button variant="outlined" onClick={() => handleEnrollClick(course)}><RadioButtonUncheckedIcon /></Button>
+                        )}
+                      </>
+                    )}
+
                   </TableCell>
                 </TableRow>
               );

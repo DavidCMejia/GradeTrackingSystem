@@ -33,12 +33,12 @@ import Add from '@mui/icons-material/Add';
 
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { URL_BACKEND } from '../../../constants';
+import { PROFESSOR_ROLE, URL_BACKEND } from '../../../constants';
 import type {
   Course, Grade, Student,
 } from '../../../types';
 
-import { selectCourses, selectStudents } from '../../../redux/selectors/mainSelectors';
+import { selectCourses, selectStudents, selectUser } from '../../../redux/selectors/mainSelectors';
 import ModalEditGrade from '../../../components/modalEditGrade';
 
 const Grades: NextPage = () => {
@@ -50,6 +50,7 @@ const Grades: NextPage = () => {
 
   const studentsList: Student[] = useSelector(selectStudents);
   const courseList: Course[] = useSelector(selectCourses);
+  const userRedux = useSelector(selectUser);
 
   const { push, asPath } = useRouter();
 
@@ -129,7 +130,9 @@ const Grades: NextPage = () => {
       <Typography variant="h4" align="center" gutterBottom>
         Grades
         <br />
+        {userRedux.role === PROFESSOR_ROLE && (
         <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
+        )}
         <br />
         <TextField
           label="Search"
@@ -156,7 +159,8 @@ const Grades: NextPage = () => {
               <TableCell style={rowTitleStyle}>Course</TableCell>
               <TableCell style={rowTitleStyle}>Student</TableCell>
               <TableCell style={rowTitleStyle}>Grade</TableCell>
-              <TableCell style={rowTitleStyle}>Actions</TableCell>
+              {userRedux.role === PROFESSOR_ROLE && (
+              <TableCell style={rowTitleStyle}>Actions</TableCell>)}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -172,10 +176,12 @@ const Grades: NextPage = () => {
                   <TableCell style={centerRowStyle}>{get(foundCourse, 'course_name')?.toUpperCase()}</TableCell>
                   <TableCell style={centerRowStyle}>{get(foundStudent, 'name')}</TableCell>
                   <TableCell style={centerRowStyle}>{grade.grade}</TableCell>
+                  {userRedux.role === PROFESSOR_ROLE && (
                   <TableCell style={centerRowStyle}>
                     <Button variant="outlined" onClick={() => handleEditClick(grade)}><EditIcon /></Button>
                     <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(grade)}><DeleteIcon /></Button>
                   </TableCell>
+                  )}
                 </TableRow>
               );
             })}

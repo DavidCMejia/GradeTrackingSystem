@@ -8,9 +8,10 @@ import { map } from 'lodash';
 import { TableContainer, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { URL_BACKEND } from '../../../constants';
+import { useEffect } from 'react';
+import { PROFESSOR_ROLE, URL_BACKEND } from '../../../constants';
 import type { Course, Professor, Student } from '../../../types';
-import { selectProfessors, selectStudents } from '../../../redux/selectors/mainSelectors';
+import { selectProfessors, selectStudents, selectUser } from '../../../redux/selectors/mainSelectors';
 import { filterProfessors, filterStudents } from '../../../utils';
 
 const { Item } = Form;
@@ -20,6 +21,7 @@ const CreateCourse: NextPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const studentsList: Student[] = useSelector(selectStudents);
   const professorsList: Professor[] = useSelector(selectProfessors);
+  const userRedux = useSelector(selectUser);
   const success = () => {
     messageApi.open({
       type: 'success',
@@ -43,6 +45,13 @@ const CreateCourse: NextPage = () => {
       push('/dashboard/courses');
     }, 2500);
   };
+
+  useEffect(() => {
+    if (userRedux.role !== PROFESSOR_ROLE) {
+      message.error('You are not allowed to access this page, please contact the administrator.');
+      push('/dashboard');
+    }
+  }, [userRedux]);
 
   return (
 

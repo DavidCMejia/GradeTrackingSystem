@@ -8,9 +8,10 @@ import { map } from 'lodash';
 import { TableContainer, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { URL_BACKEND, roleOptionsSelect } from '../../../constants';
+import { useEffect } from 'react';
+import { PROFESSOR_ROLE, URL_BACKEND, roleOptionsSelect } from '../../../constants';
 import type { Course, Student } from '../../../types';
-import { selectCourses } from '../../../redux/selectors/mainSelectors';
+import { selectCourses, selectUser } from '../../../redux/selectors/mainSelectors';
 import { filterCourses } from '../../../utils';
 
 const { Item } = Form;
@@ -19,6 +20,7 @@ const CreateStudent: NextPage = () => {
   const { push } = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const courseList: Course[] = useSelector(selectCourses);
+  const userRedux = useSelector(selectUser);
   const success = () => {
     messageApi.open({
       type: 'success',
@@ -42,6 +44,13 @@ const CreateStudent: NextPage = () => {
       push('/dashboard/students');
     }, 2500);
   };
+
+  useEffect(() => {
+    if (userRedux.role !== PROFESSOR_ROLE) {
+      message.error('You are not allowed to access this page, please contact the administrator.');
+      push('/dashboard');
+    }
+  }, [userRedux]);
 
   return (
 
@@ -69,7 +78,7 @@ const CreateStudent: NextPage = () => {
           <Input />
         </Item>
         <Item label="Identification" name="identification_number" rules={[{ required: true }]}>
-          <Input />
+          <Input placeholder="1.022..." />
         </Item>
         <Item label="Name" name="name" rules={[{ required: true }]}>
           <Input />
@@ -81,8 +90,8 @@ const CreateStudent: NextPage = () => {
             options={roleOptionsSelect}
           />
         </Item>
-        <Item label="Email" name="email" rules={[{ required: true }]}>
-          <Input />
+        <Item label="Email" name="email" rules={[{ type: 'email', required: true }]}>
+          <Input placeholder="john@email.com" />
         </Item>
         <Item label="Courses" name="courses_enrolled">
           <Select

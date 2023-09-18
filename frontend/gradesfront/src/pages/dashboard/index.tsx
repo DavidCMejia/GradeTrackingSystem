@@ -19,13 +19,12 @@ import { setStudents } from '../../redux/slices/studentsSlice';
 import { setProfessors } from '../../redux/slices/professorsSlice';
 import { setCourses } from '../../redux/slices/coursesSlice';
 
-import { URL_BACKEND } from '../../constants';
+import { PROFESSOR_ROLE, URL_BACKEND } from '../../constants';
 
 const Dashboard: NextPage = () => {
   const dispatch = useDispatch();
   const userRedux = useSelector(selectUser);
   const { push } = useRouter();
-  // console.log('🚀 ~ userRedux Dashboard:', userRedux);
 
   const fetchCourses = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
@@ -102,6 +101,7 @@ const Dashboard: NextPage = () => {
               </Typography>
             </Paper>
           </Grid>
+          {userRedux.role === PROFESSOR_ROLE && (
           <Grid key="student" item>
             <Paper
               sx={paperStyles}
@@ -114,6 +114,7 @@ const Dashboard: NextPage = () => {
               </Typography>
             </Paper>
           </Grid>
+          )}
           <Grid key="schedule" item>
             <Paper
               sx={paperStyles}

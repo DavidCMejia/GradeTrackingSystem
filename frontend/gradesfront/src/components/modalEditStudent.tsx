@@ -139,7 +139,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
               options={roleOptionsSelect}
             />
           </Item>
-          <Item label="Email" name="email" rules={[{ required: true }]}>
+          <Item label="Email" name="email" rules={[{ type: 'email', required: true }]}>
             <Input />
           </Item>
           <Item label="Courses" name="courses_enrolled">

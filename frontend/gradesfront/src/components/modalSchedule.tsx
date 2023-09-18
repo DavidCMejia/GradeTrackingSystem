@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 
 import type { Dayjs } from 'dayjs';
+import { useSelector } from 'react-redux';
 import type {
   CalendarEvent,
   Course,
@@ -29,7 +30,10 @@ import type {
 } from '../types';
 
 import { filterCourses, filterProfessors, filterStudents } from '../utils';
-import { URL_BACKEND, formatDate, formatHour } from '../constants';
+import {
+  PROFESSOR_ROLE, URL_BACKEND, formatDate, formatHour,
+} from '../constants';
+import { selectUser } from '../redux/selectors/mainSelectors';
 
 type scheduleModalProps = {
     handleCancel: () => void,
@@ -66,6 +70,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
   const [duration, setDuration] = useState<number>(0);
   const [singleSchedule, setSingleSchedule] = useState<Schedule>();
   const [multipleSchedules, setMultipleSchudules] = useState<boolean>(false);
+  const userRedux = useSelector(selectUser);
 
   const onFinish = async (values: Schedule) => {
     const hourTime = values.time.map((t) => dayjs(t));
@@ -130,10 +135,16 @@ const ModalSchedule: FC<scheduleModalProps> = ({
       modalForm.setFieldsValue({ date });
       if (!isEmpty(findCourseByName)) { setHttpMethod('PUT'); } else { setHttpMethod('POST'); }
     }
-  }, [singleSchedule, selectedEvent, date]);
+  }, [date, singleSchedule, selectedEvent]);
 
   useEffect(() => {
-    if (!handleOpen) setHttpMethod(''); modalForm.resetFields();
+    if (!handleOpen) {
+      setHttpMethod('');
+      modalForm.resetFields();
+      setSingleSchedule(undefined);
+      setMultipleSchudules(false);
+      schedules.length = 0;
+    }
   }, [handleOpen]);
 
   useEffect(() => {
@@ -158,7 +169,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
             .catch();
         }}
         okText="Schedule"
-        footer={multipleSchedules ? null : undefined}
+        footer={multipleSchedules || userRedux.role !== PROFESSOR_ROLE ? null : undefined}
       >
         {!showSucessResponse && !multipleSchedules && (
         <>
@@ -182,7 +193,7 @@ const ModalSchedule: FC<scheduleModalProps> = ({
             </Item>
             <Item label="Date" name="date">
               <DatePicker
-                defaultValue={date}
+                // defaultValue={date}
                 value={date}
                 style={{ width: '100%' }}
                 onChange={(newValue) => { if (newValue) date = newValue; }}

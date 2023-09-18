@@ -33,12 +33,12 @@ import Add from '@mui/icons-material/Add';
 
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { URL_BACKEND, roles } from '../../../constants';
+import { PROFESSOR_ROLE, URL_BACKEND, roles } from '../../../constants';
 import type { Course, Student } from '../../../types';
 
 import ModalCourses from '../../../components/modalCourses';
 import ModalEditStudent from '../../../components/modalEditStudent';
-import { selectCourses } from '../../../redux/selectors/mainSelectors';
+import { selectCourses, selectUser } from '../../../redux/selectors/mainSelectors';
 
 const Courses: NextPage = () => {
   const [studentsData, setStudentsData] = useState<Student[]>();
@@ -48,6 +48,7 @@ const Courses: NextPage = () => {
   const [coursesIds, setCoursesIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
+  const userRedux = useSelector(selectUser);
 
   const coursesList: Course[] = useSelector(selectCourses);
 
@@ -114,6 +115,14 @@ const Courses: NextPage = () => {
     fetchStudents();
   }, []);
 
+  useEffect(() => {
+    fetchStudents();
+    if (userRedux.role !== PROFESSOR_ROLE) {
+      message.error('You are not allowed to access this page, please contact the administrator.');
+      push('/dashboard');
+    }
+  }, [userRedux]);
+
   if (isEmpty(studentsData)) {
     return (
       <Typography variant="h3" align="center" gutterBottom>
@@ -145,7 +154,7 @@ const Courses: NextPage = () => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           style={{
-            marginBottom: '20px', marginTop: '20px', maxWidth: '100px', minWidth: '800px',
+            marginBottom: '20px', marginTop: '20px', maxWidth: '100px', minWidth: '850px',
           }}
         />
       </Typography>
@@ -153,7 +162,7 @@ const Courses: NextPage = () => {
       <TableContainer
         component={Paper}
         style={{
-          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '800px',
+          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '850px',
         }}
       >
         <Table>

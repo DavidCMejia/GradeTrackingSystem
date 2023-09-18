@@ -4,13 +4,14 @@ import {
 } from 'antd';
 import { NextPage } from 'next';
 import axios from 'axios';
-import { map } from 'lodash';
+import { isNaN, map } from 'lodash';
 import { TableContainer, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { URL_BACKEND } from '../../../constants';
+import { useEffect } from 'react';
+import { PROFESSOR_ROLE, URL_BACKEND } from '../../../constants';
 import type { Course, Grade, Student } from '../../../types';
-import { selectCourses, selectStudents } from '../../../redux/selectors/mainSelectors';
+import { selectCourses, selectStudents, selectUser } from '../../../redux/selectors/mainSelectors';
 import { filterCourses, filterStudents } from '../../../utils';
 
 const { Item } = Form;
@@ -20,6 +21,7 @@ const CreateGrade: NextPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const studentsList: Student[] = useSelector(selectStudents);
   const courseList: Course[] = useSelector(selectCourses);
+  const userRedux = useSelector(selectUser);
   const success = () => {
     messageApi.open({
       type: 'success',
@@ -43,6 +45,13 @@ const CreateGrade: NextPage = () => {
       push('/dashboard/grades');
     }, 2500);
   };
+
+  useEffect(() => {
+    if (userRedux.role !== PROFESSOR_ROLE) {
+      message.error('You are not allowed to access this page, please contact the administrator');
+      push('/dashboard');
+    }
+  }, [userRedux]);
 
   return (
 
@@ -90,8 +99,25 @@ const CreateGrade: NextPage = () => {
             }))}
           />
         </Item>
-        <Item label="Grade" name="grade" rules={[{ required: true }]}>
-          <Input />
+        <Item
+          label="Grade"
+          name="grade"
+          rules={[
+            {
+              required: true,
+              message: 'Por favor, ingresa una calificación.',
+            },
+            {
+              validator: async (rule, value) => {
+                const numericValue = parseFloat(value);
+                if (isNaN(numericValue) || numericValue < 1 || numericValue > 100) {
+                  throw new Error('Please, enter a valid grade between 1 and 100.');
+                }
+              },
+            },
+          ]}
+        >
+          <Input placeholder="75" />
         </Item>
         <Item wrapperCol={{ offset: 8, span: 12 }}>
           <Button type="primary" htmlType="submit">
