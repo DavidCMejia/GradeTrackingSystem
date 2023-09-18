@@ -114,7 +114,7 @@ const Courses: NextPage = () => {
     })
       .then((res) => {
         if (res && res.status === 200) {
-          success('Unenrolled');
+          success('unenrolled');
           fetchCourses();
         }
         return null;
