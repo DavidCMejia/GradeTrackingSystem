@@ -71,10 +71,7 @@ const CreateStudent: NextPage = () => {
         <Item label="Identification" name="identification_number" rules={[{ required: true }]}>
           <Input />
         </Item>
-        <Item
-          label="Name"
-          name="name"
-        >
+        <Item label="Name" name="name" rules={[{ required: true }]}>
           <Input />
         </Item>
         <Item label="Role" name="role">

@@ -19,5 +19,8 @@ urlpatterns = [
     path('api/professors/by_email/<email>/', 
          views.ProfessorView.as_view({'get': 'list'}), 
          name='professor-list-by-email'),
+     path('api/students/by_email/<email>/',
+           views.StudentView.as_view({'get': 'list'}),
+               name='student-list-by-email'),          
 ]
     

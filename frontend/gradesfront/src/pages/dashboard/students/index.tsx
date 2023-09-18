@@ -52,7 +52,6 @@ const Courses: NextPage = () => {
   const coursesList: Course[] = useSelector(selectCourses);
 
   const { push, asPath } = useRouter();
-  // TODO: Poner name required en create student
 
   const sortedStudentssData = orderBy(studentsData, 'name', 'asc');
   const searchTextLower = searchText.toLowerCase();
