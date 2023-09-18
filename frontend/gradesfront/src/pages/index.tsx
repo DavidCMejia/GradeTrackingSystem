@@ -2,23 +2,20 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 import {
-  Typography, Box,
+  Typography,
+  Box,
   Card,
   Button,
   CardActions,
   CardContent,
 } from '@mui/material';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import WelcomeMessage from '../components/welcome';
 import { URL_BACKEND } from '../constants';
-import { selectUser } from '../redux/selectors/mainSelectors';
 
 export default function Home() {
   const { user } = useUser();
   const [role, setRole] = useState<number>(0);
-  const userRedux = useSelector(selectUser);
-  console.log('🚀 ~ userRedux:', userRedux);
 
   const card = (
     <>
