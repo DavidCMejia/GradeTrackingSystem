@@ -17,15 +17,16 @@ import SchoolIcon from '@mui/icons-material/School';
 
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Link from 'next/link';
 
 import { useRouter } from 'next/router';
 import { setUser } from '../redux/slices/userSlice';
-import { emptyUserInfo } from '../constants';
+import { PROFESSOR_ROLE, emptyUserInfo } from '../constants';
 
 import styles from '../styles/navbar.module.css';
+import { selectUser } from '../redux/selectors/mainSelectors';
 
 export default function Navbar() {
   const { user } = useUser();
@@ -35,6 +36,8 @@ export default function Navbar() {
   const [handleOpenUserMenu, setHandleOpenUserMenu] = useState<null | HTMLElement>(null);
   const pages = ['Dashboard'];
   const pageLinks = ['/dashboard'];
+
+  const userRedux = useSelector(selectUser);
 
   const handleCloseUserMenu = () => {
     setHandleOpenUserMenu(null);
@@ -94,6 +97,7 @@ export default function Navbar() {
               }}
             >
 
+              {userRedux.role === PROFESSOR_ROLE && (
               <MenuItem>
                 <Typography textAlign="center" onClick={() => push('/admin')}>
                   <Link href="" passHref className={styles.linkNoStyle}>
@@ -101,6 +105,7 @@ export default function Navbar() {
                   </Link>
                 </Typography>
               </MenuItem>
+              )}
               {pages.map((page, index) => (
                 <MenuItem key={page} onClick={() => setHandleOpenNavMenu(null)}>
                   <Typography textAlign="center">
@@ -132,6 +137,7 @@ export default function Navbar() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {userRedux.role === PROFESSOR_ROLE && (
             <Link href="" passHref className={styles.linkNoStyle}>
               <Button
                 onClick={() => push('/dashboard/admin')}
@@ -140,6 +146,7 @@ export default function Navbar() {
                 Admin
               </Button>
             </Link>
+            )}
             {pages.map((page, index) => (
               <Link key={page} href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
                 <Button

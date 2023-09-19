@@ -1,15 +1,16 @@
 import { NextPage } from 'next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Form, Input, Modal, Alert,
+  Form, Input, Modal, Alert, message,
 } from 'antd';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { selectUser } from '../../../redux/selectors/mainSelectors';
 import { setUser } from '../../../redux/slices/userSlice';
 import type { AdminLogin } from '../../../types';
-import { URL_BACKEND } from '../../../constants';
+import { PROFESSOR_ROLE, URL_BACKEND } from '../../../constants';
 
 const { Item } = Form;
 const Admin: NextPage = () => {
@@ -18,6 +19,7 @@ const Admin: NextPage = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const { push } = useRouter();
   const userRedux = useSelector(selectUser);
 
   const onSubmit = async (values: AdminLogin) => {
@@ -56,6 +58,13 @@ const Admin: NextPage = () => {
     }
     dispatch(setUser({ ...userRedux, admin: false }));
   };
+
+  useEffect(() => {
+    if (userRedux.role !== PROFESSOR_ROLE) {
+      message.error('You are not allowed to access this page, please contact the administrator.');
+      push('/dashboard');
+    }
+  }, [userRedux]);
 
   if (!userRedux.admin) {
     return (
