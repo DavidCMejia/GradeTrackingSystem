@@ -61,6 +61,7 @@ Permissions/roles:
 | Edit Grades         |         -           |         X           |         X           |
 | Delete Grades       |         -           |         X           |         X           |
 | View Other Grades   |         -           |         -           |         X           |
-| Admin Module Access |         -           | Admin Password      |         -           |
+| Admin Module Access |         -           | Admin Password      |         X           |
 | Admin Tasks         |         -           |         -           |         X           |
+| Delete, Edit Accounts |       -           |         -           |         X           |
 
