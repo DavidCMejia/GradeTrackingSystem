@@ -46,7 +46,7 @@ Course and grade tracking for classrooms and universities.
 Permissions/roles:
 
 1. Student: Can view their own grades, all schedules and all courses. He can also enroll to the courses he wants. However he cannot edit or delete anything, look at other students grades or go to the admin module.
-2. Regular Professor: Can view all grades, all schedules and all courses. He can also edit and delete courses and grades. However he cannot enroll to courses, look at other students grades but can not delete accounts. He can provide admin password to gain access to admin module.
+2. Regular Professor: Can view all grades, all schedules and own courses. He can also edit and delete own courses and grades. However he cannot enroll to courses, look at other students grades but can not delete accounts. He can provide admin password to gain access to admin module.
 3. Admin Professor: Can view all grades, all schedules and all courses. He can also edit and delete courses and grades. He can also look at other students grades. He can also go to the admin module.
 
 | Role                | Student             | Regular Professor   | Admin Professor     |
