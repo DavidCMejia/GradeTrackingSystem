@@ -37,14 +37,14 @@ const VerifyInfo: NextPage = () => {
     try {
       if (!dataCheckedAlready && userData && userRole) {
         const res = await axios.put(`${URL_BACKEND}/api/${userRole}/${userData?.id}/`, values);
-        if (res && res.status === 201) message.success('Information verified successfully');
+        if (res && res.status === 200) message.success('Information verified successfully');
         const {
           id, name, email, role, identification_number,
         } = res.data;
         dispatch(setUser({
           id, name, email, role, identification_number,
         } as Professor | Student));
-        push('/dashboard');
+        setTimeout(() => push('/dashboard'), 2000);
       } else {
         const res = await axios.post(`${URL_BACKEND}/api/${userRole}/`, values);
         if (res && res.status === 201) message.success('Information verified successfully');
@@ -54,7 +54,7 @@ const VerifyInfo: NextPage = () => {
         dispatch(setUser({
           id, name, email, role, identification_number,
         } as Professor | Student));
-        push('/dashboard');
+        setTimeout(() => push('/dashboard'), 2000);
       }
     } catch (error) {
       const parsedError = parseError(error);

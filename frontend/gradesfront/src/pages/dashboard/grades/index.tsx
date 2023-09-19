@@ -10,7 +10,6 @@ import {
   Paper,
   Button,
   Typography,
-  CircularProgress,
   TextField,
 } from '@mui/material';
 
@@ -30,10 +29,11 @@ import axios from 'axios';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Add from '@mui/icons-material/Add';
+import ErrorIcon from '@mui/icons-material/Error';
 
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { PROFESSOR_ROLE, URL_BACKEND } from '../../../constants';
+import { PROFESSOR_ROLE, STUDENT_ROLE, URL_BACKEND } from '../../../constants';
 import type {
   Course, Grade, Student,
 } from '../../../types';
@@ -58,11 +58,12 @@ const Grades: NextPage = () => {
   const searchTextLower = searchText.toLowerCase();
 
   const filteredData: Grade[] = sortedCoursesData
-    .filter(({ student, course }) => {
+    .filter(({ student, course, grade }) => {
       const foundStudent = studentsList.find((studentItem) => studentItem.id === student);
       const foundCourse = courseList.find((courseItem) => courseItem.id === course);
       return foundStudent?.name.toLowerCase().includes(searchTextLower)
-      || foundCourse?.course_name.toLowerCase().includes(searchTextLower);
+      || foundCourse?.course_name.toLowerCase().includes(searchTextLower)
+      || grade.toString().includes(searchTextLower);
     });
 
   const success = () => {
@@ -80,7 +81,14 @@ const Grades: NextPage = () => {
     axios.get(`${URL_BACKEND}/api/grades/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
-          setGradesData(res.data);
+          if (userRedux.role === STUDENT_ROLE) {
+            const filteredGrades = res.data.filter(
+              (grade: Grade) => grade.student === userRedux.id,
+            );
+            setGradesData(filteredGrades);
+          } else {
+            setGradesData(res.data);
+          }
         }
         return null;
       })
@@ -104,6 +112,19 @@ const Grades: NextPage = () => {
       .catch((e) => message.error(e.toString()));
   };
 
+  const getGradeColor = (gradeValue:number) => {
+    if (gradeValue < 60) {
+      return 'red'; // Rojo para notas menores a 60
+    }
+    if (gradeValue >= 60 && gradeValue < 80) {
+      return 'orange'; // Amarillo para notas entre 60 y 80
+    }
+    if (gradeValue >= 80 && gradeValue <= 100) {
+      return 'green'; // Verde para notas entre 80 y 100
+    }
+    return 'black'; // Color por defecto
+  };
+
   useEffect(() => {
     fetchGrades();
   }, []);
@@ -111,8 +132,13 @@ const Grades: NextPage = () => {
   if (isEmpty(gradesData)) {
     return (
       <Typography variant="h3" align="center" gutterBottom>
-        <CircularProgress />
-        Loading...
+        <ErrorIcon fontSize="large" />
+        {' '}
+        The student
+        {' '}
+        {userRedux.name}
+        {' '}
+        has no grades yet
       </Typography>
     );
   }
@@ -169,13 +195,17 @@ const Grades: NextPage = () => {
               && find(studentsList, { id: grade.student });
               const foundCourse = courseList
               && find(courseList, { id: grade.course });
-
+              const gradeColor = getGradeColor(grade.grade);
               return (
                 <TableRow key={grade.id}>
                   {/* <TableCell style={centerRowStyle}>{grade.id}</TableCell> */}
                   <TableCell style={centerRowStyle}>{get(foundCourse, 'course_name')?.toUpperCase()}</TableCell>
                   <TableCell style={centerRowStyle}>{get(foundStudent, 'name')}</TableCell>
-                  <TableCell style={centerRowStyle}>{grade.grade}</TableCell>
+                  <TableCell style={centerRowStyle}>
+                    <span style={{ color: gradeColor }}>
+                      {grade.grade}
+                    </span>
+                  </TableCell>
                   {userRedux.role === PROFESSOR_ROLE && (
                   <TableCell style={centerRowStyle}>
                     <Button variant="outlined" onClick={() => handleEditClick(grade)}><EditIcon /></Button>
