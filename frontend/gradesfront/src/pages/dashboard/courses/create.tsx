@@ -36,7 +36,19 @@ const CreateCourse: NextPage = () => {
   const onFinish = async (values: Course) => {
     try {
       const res = await axios.post(`${URL_BACKEND}/api/courses/`, values);
-      if (res && res.status === 201) success();
+
+      if (res && res.status === 201) {
+        map(values.students, async (studentId) => {
+          const foundStudent = studentsList.find((student) => student.id === studentId);
+          if (foundStudent) {
+            await axios.patch(`${URL_BACKEND}/api/students/${studentId}/`, {
+              courses_enrolled: [...foundStudent.courses_enrolled, res.data.id],
+            });
+          }
+        });
+
+        success();
+      }
     } catch (error: any) {
       message.error(error.toString());
     }
