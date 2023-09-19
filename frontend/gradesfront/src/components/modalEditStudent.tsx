@@ -41,7 +41,16 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
     const values = modalForm.getFieldsValue();
     try {
       const res = await axios.put(`${URL_BACKEND}/api/students/${values.id}/`, values);
+
       if (res && res.status === 200) {
+        map(values.courses_enrolled, async (courseId) => {
+          const foundCourse = courseList.find((course) => course.id === courseId);
+          if (foundCourse) {
+            await axios.patch(`${URL_BACKEND}/api/courses/${courseId}/`, {
+              students: [...foundCourse.students, res.data.id],
+            });
+          }
+        });
         setShowSucessResponse(true);
         setTimeout(() => {
           setShowSucessResponse(false);
