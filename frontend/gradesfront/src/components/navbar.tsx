@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 
 import Link from 'next/link';
 
+import { useRouter } from 'next/router';
 import { setUser } from '../redux/slices/userSlice';
 import { emptyUserInfo } from '../constants';
 
@@ -29,10 +30,11 @@ import styles from '../styles/navbar.module.css';
 export default function Navbar() {
   const { user } = useUser();
   const dispatch = useDispatch();
+  const { push } = useRouter();
   const [handleOpenNavMenu, setHandleOpenNavMenu] = useState<null | HTMLElement>(null);
   const [handleOpenUserMenu, setHandleOpenUserMenu] = useState<null | HTMLElement>(null);
-  const pages = ['Dashboard', 'Profile', 'Blog'];
-  const pageLinks = ['/dashboard', '/profile', '/blog'];
+  const pages = ['Dashboard'];
+  const pageLinks = ['/dashboard'];
 
   const handleCloseUserMenu = () => {
     setHandleOpenUserMenu(null);
@@ -91,6 +93,14 @@ export default function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
+
+              <MenuItem>
+                <Typography textAlign="center" onClick={() => push('/admin')}>
+                  <Link href="" passHref className={styles.linkNoStyle}>
+                    Admin
+                  </Link>
+                </Typography>
+              </MenuItem>
               {pages.map((page, index) => (
                 <MenuItem key={page} onClick={() => setHandleOpenNavMenu(null)}>
                   <Typography textAlign="center">
@@ -122,6 +132,14 @@ export default function Navbar() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Link href="" passHref className={styles.linkNoStyle}>
+              <Button
+                onClick={() => push('/admin')}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Admin
+              </Button>
+            </Link>
             {pages.map((page, index) => (
               <Link key={page} href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
                 <Button
@@ -156,13 +174,14 @@ export default function Navbar() {
               open={Boolean(handleOpenUserMenu)}
               onClose={handleCloseUserMenu}
             >
-              <Link className={styles.linkNoStyle} href="" as="/account">
-                <MenuItem>
-                  <Typography textAlign="center">
-                    Account
-                  </Typography>
-                </MenuItem>
-              </Link>
+
+              {user && (
+              <MenuItem onClick={() => push('/')}>
+                <Typography textAlign="center">
+                  Profile
+                </Typography>
+              </MenuItem>
+              )}
               <Link
                 href={user ? '/api/auth/logout' : '/api/auth/login'}
                 onClick={() => user && dispatch(setUser(emptyUserInfo))}
