@@ -57,4 +57,9 @@ export type CalendarEvent = {
     events: { content: string, type: string }[];
     content?: string;
     type?: string;
-  };
+};
+
+export type AdminLogin = {
+    username: string,
+    password: string,
+};

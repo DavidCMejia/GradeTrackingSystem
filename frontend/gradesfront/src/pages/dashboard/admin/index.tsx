@@ -5,8 +5,11 @@ import { useState } from 'react';
 import {
   Form, Input, Modal, Alert,
 } from 'antd';
+import axios from 'axios';
 import { selectUser } from '../../../redux/selectors/mainSelectors';
 import { setUser } from '../../../redux/slices/userSlice';
+import type { AdminLogin } from '../../../types';
+import { URL_BACKEND } from '../../../constants';
 
 const { Item } = Form;
 const Admin: NextPage = () => {
@@ -17,26 +20,41 @@ const Admin: NextPage = () => {
   const dispatch = useDispatch();
   const userRedux = useSelector(selectUser);
 
-  const onSubmit = (values: any) => {
-    if (values.username === 'admin' && values.password === 'admin') {
+  const onSubmit = async (values: AdminLogin) => {
+    if (values.username === process.env.NEXT_PUBLIC_ADMIN_USERNAME
+      && values.password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+      const res = await axios.patch(`${URL_BACKEND}/api/professors/${userRedux.id}/`, {
+        admin: true,
+      });
+      if (res.status !== 200) {
+        setShowFailureResponse(true);
+        setTimeout(() => {
+          setShowFailureResponse(false);
+        }, 3000);
+      }
+
       dispatch(setUser({ ...userRedux, admin: true }));
       setShowSucessResponse(true);
-      setTimeout(
-        () => {
-          setShowSucessResponse(false);
-          setOpenModal(false);
-        },
-        3000,
-      );
+      setTimeout(() => {
+        setShowSucessResponse(false);
+        setOpenModal(false);
+      }, 3000);
     } else {
       setShowFailureResponse(true);
-      setTimeout(
-        () => {
-          setShowFailureResponse(false);
-        },
-        3000,
-      );
+      setTimeout(() => {
+        setShowFailureResponse(false);
+      }, 3000);
     }
+  };
+
+  const removePrivileges = async () => {
+    const res = await axios.patch(`${URL_BACKEND}/api/professors/${userRedux.id}/`, {
+      admin: false,
+    });
+    if (res.status !== 200) {
+      throw new Error('Error removing privileges');
+    }
+    dispatch(setUser({ ...userRedux, admin: false }));
   };
 
   if (!userRedux.admin) {
@@ -126,9 +144,7 @@ const Admin: NextPage = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => {
-            dispatch(setUser({ ...userRedux, admin: false }));
-          }}
+          onClick={() => { removePrivileges(); }}
         >
           Remove Privileges
         </Button>

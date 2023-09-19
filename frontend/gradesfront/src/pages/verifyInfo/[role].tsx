@@ -27,32 +27,44 @@ import { setUser } from '../../redux/slices/userSlice';
 const VerifyInfo: NextPage = () => {
   const { query, push } = useRouter();
   const { user } = useUser();
+  const [messageApi, contextHolder] = message.useMessage();
   const [dataCheckedAlready, setDataCheckedAlready] = useState<boolean>(false);
   const [userData, setUserData] = useState<Professor | Student>();
   const [userRole, setUserRole] = useState<string>('');
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Information verified successfully',
+      className: 'custom-class',
+      style: {
+        marginTop: '20vh',
+      },
+    });
+  };
+
   const handleSubmit = async (values: Professor) => {
     try {
       if (!dataCheckedAlready && userData && userRole) {
         const res = await axios.put(`${URL_BACKEND}/api/${userRole}/${userData?.id}/`, values);
-        if (res && res.status === 200) message.success('Information verified successfully');
+        if (res && res.status === 200) success();
         const {
-          id, name, email, role, identification_number,
+          id, name, email, role, identification_number, admin,
         } = res.data;
         dispatch(setUser({
-          id, name, email, role, identification_number,
+          id, name, email, role, identification_number, admin,
         } as Professor | Student));
         setTimeout(() => push('/dashboard'), 2000);
       } else {
         const res = await axios.post(`${URL_BACKEND}/api/${userRole}/`, values);
-        if (res && res.status === 201) message.success('Information verified successfully');
+        if (res && res.status === 201) success();
         const {
-          id, name, email, role, identification_number,
+          id, name, email, role, identification_number, admin,
         } = res.data;
         dispatch(setUser({
-          id, name, email, role, identification_number,
+          id, name, email, role, identification_number, admin,
         } as Professor | Student));
         setTimeout(() => push('/dashboard'), 2000);
       }
@@ -92,6 +104,7 @@ const VerifyInfo: NextPage = () => {
       <br />
       <br />
       <br />
+      {contextHolder}
       <Container fixed maxWidth="sm" sx={{ border: '1px solid #ccc', borderRadius: '25px' }}>
         {dataCheckedAlready && (
           <Typography variant="h4" textAlign="center">
@@ -148,7 +161,7 @@ const VerifyInfo: NextPage = () => {
 
           <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
             <Button type="primary" htmlType="submit">
-              Guardar
+              Verifiy
             </Button>
           </Form.Item>
         </Form>
