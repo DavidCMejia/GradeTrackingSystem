@@ -59,5 +59,19 @@ class Schedule(TimestampedModel):
     link = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=100, blank=True, null=True)
 
+class Users(TimestampedModel):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    identification_number = models.CharField(max_length=10, blank=True, null=True, unique=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True, unique=True)
+    status = models.BooleanField(default=False)
+    professor_id = models.ForeignKey('Professor', on_delete=models.SET_NULL, null=True, blank=True)
+    student_id = models.ForeignKey('Student', on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+
+
     def __str__(self):
         return self.title

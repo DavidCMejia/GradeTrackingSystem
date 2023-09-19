@@ -46,6 +46,7 @@ import { selectProfessors, selectStudents, selectUser } from '../../../redux/sel
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
+  console.log('🚀 ~ coursesData:', coursesData);
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedCourse, setSelectedCourse] = useState<Course>();
@@ -86,7 +87,14 @@ const Courses: NextPage = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
-          setCoursesData(res.data);
+          if (userRedux.role === PROFESSOR_ROLE && !userRedux.admin) {
+            const filteredCourses = res.data.filter(
+              (course: Course) => course.professor === userRedux.id,
+            );
+            setCoursesData(filteredCourses);
+          } else {
+            setCoursesData(res.data);
+          }
         }
         return null;
       })
