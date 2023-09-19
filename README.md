@@ -49,28 +49,17 @@ Permissions/roles:
 2. Regular Professor: Can view all grades, all schedules and all courses. He can also edit and delete courses and grades. However he cannot enroll to courses, look at other students grades but can not delete accounts. He can provide admin password to gain access to admin module.
 3. Admin Professor: Can view all grades, all schedules and all courses. He can also edit and delete courses and grades. He can also look at other students grades. He can also go to the admin module.
 
-| Role                | Permissions                                            |
-|---------------------|-------------------------------------------------------|
-| Student             | - View own grades                                    |
-|                     | - View all schedules                                 |
-|                     | - View all courses                                   |
-|                     | - Enroll in courses                                  |
-|                     | - Cannot edit or delete anything                     |
-|                     | - Cannot view other students' grades                |
-|                     | - Cannot access admin module                         |
-| Regular Professor   | - View all grades                                    |
-|                     | - View all schedules                                 |
-|                     | - View all courses                                   |
-|                     | - Edit and delete courses                            |
-|                     | - Edit and delete grades                             |
-|                     | - Provide admin password for admin module access     |
-|                     | - Cannot enroll in courses                           |
-|                     | - Cannot view other students' grades                |
-| Admin Professor     | - View all grades                                    |
-|                     | - View all schedules                                 |
-|                     | - View all courses                                   |
-|                     | - Edit and delete courses                            |
-|                     | - Edit and delete grades                             |
-|                     | - View other students' grades                        |
-|                     | - Access admin module                                |
-|                     | - Can perform admin tasks                            |
+| Role               | Student | Regular Professor | Admin Professor |
+|-------------------- | ------- | ----------------- | --------------- |
+| View Own Grades     |    X    |        X          |        X        |
+| View All Grades     |    -    |        X          |        X        |
+| View All Schedules  |    X    |        X          |        X        |
+| View All Courses    |    X    |        X          |        X        |
+| Enroll in Courses   |    X    |        -          |        -        |
+| Edit Courses        |    -    |        X          |        X        |
+| Delete Courses      |    -    |        X          |        X        |
+| Edit Grades         |    -    |        X          |        X        |
+| Delete Grades       |    -    |        X          |        X        |
+| View Other Grades   |    -    |        -          |        X        |
+| Admin Module Access |    -    | Admin Password    |        -        |
+| Admin Tasks         |    -    |        -          |        X        |
