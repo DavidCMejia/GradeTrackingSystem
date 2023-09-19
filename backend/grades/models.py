@@ -23,6 +23,7 @@ class Student(TimestampedModel, MainInfoModel):
 
 class Professor(TimestampedModel, MainInfoModel):
     professor_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    admin = models.BooleanField(default=False)
     class Meta:
         verbose_name = 'professor'
         verbose_name_plural = 'professors'

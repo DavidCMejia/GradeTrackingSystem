@@ -11,6 +11,7 @@ const initialState: UserState = {
   name: '',
   email: '',
   role: '',
+  admin: false,
   courses_enrolled: [],
 };
 
@@ -24,6 +25,7 @@ export const userSlice = createSlice({
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.role = action.payload.role;
+      state.admin = action.payload.admin;
       state.courses_enrolled = action.payload.courses_enrolled;
     },
     clearUser: (state) => {
@@ -32,6 +34,7 @@ export const userSlice = createSlice({
       state.name = '';
       state.email = '';
       state.role = '';
+      state.admin = false;
       state.courses_enrolled = [];
     },
   },

@@ -134,7 +134,7 @@ export default function Navbar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Link href="" passHref className={styles.linkNoStyle}>
               <Button
-                onClick={() => push('/admin')}
+                onClick={() => push('/dashboard/admin')}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 Admin

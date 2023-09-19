@@ -8,12 +8,14 @@ export type MainInfo = {
 }
 export type Professor = MainInfo & {
     professor_number?: string,
-    courses_enrolled: string[],
+    courses_enrolled?: string[],
+    admin: boolean,
 }
 
 export type Student = MainInfo & {
     student_number?: string,
     courses_enrolled: number[],
+    admin?: boolean,
 }
 
 export type Grade = {
