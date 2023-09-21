@@ -106,7 +106,7 @@ export default function Navbar() {
                 </Typography>
               </MenuItem>
               )}
-              {pages.map((page, index) => (
+              {user && pages.map((page, index) => (
                 <MenuItem key={page} onClick={() => setHandleOpenNavMenu(null)}>
                   <Typography textAlign="center">
                     <Link href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
@@ -147,7 +147,7 @@ export default function Navbar() {
               </Button>
             </Link>
             )}
-            {pages.map((page, index) => (
+            {user && pages.map((page, index) => (
               <Link key={page} href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
                 <Button
                   onClick={() => setHandleOpenNavMenu(null)}

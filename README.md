@@ -54,12 +54,12 @@ Permissions/roles:
 | View Own Grades     |         X           |         X           |         X           |
 | View All Grades     |         -           |         X           |         X           |
 | View All Schedules  |         X           |         X           |         X           |
-| View All Courses    |         X           |         X           |         X           |
+| View All Courses    |         X           |         -           |         X           |
 | Enroll in Courses   |         X           |         -           |         -           |
 | Edit Own Courses    |         -           |         X           |         X           |
 | Delete Own Courses  |         -           |         X           |         X           |
-| Edit Own Grades     |         -           |         X           |         X           |
-| Delete Own Grades   |         -           |         X           |         X           |
+| Edit All Grades     |         -           |         X           |         X           |
+| Delete All Grades   |         -           |         X           |         X           |
 | CRUD All Grades     |     -               |         -           |         X           |
 | View All Grades     |         -           |         -           |         X           |
 | Admin Module Access |         -           | Admin Password      |         X           |

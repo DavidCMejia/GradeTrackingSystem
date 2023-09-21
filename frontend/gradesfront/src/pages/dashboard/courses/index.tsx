@@ -46,7 +46,6 @@ import { selectProfessors, selectStudents, selectUser } from '../../../redux/sel
 
 const Courses: NextPage = () => {
   const [coursesData, setCoursesData] = useState<Course[]>();
-  console.log('🚀 ~ coursesData:', coursesData);
   const [openStudentModal, setOpenStudentModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedCourse, setSelectedCourse] = useState<Course>();
