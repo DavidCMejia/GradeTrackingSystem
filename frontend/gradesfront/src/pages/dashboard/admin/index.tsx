@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { NextPage } from 'next';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -21,21 +22,21 @@ import Add from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
-import { isEmpty } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { selectUser } from '../../../redux/selectors/mainSelectors';
 import { setUser } from '../../../redux/slices/userSlice';
-import type { AdminLogin } from '../../../types';
-import { PROFESSOR_ROLE, URL_BACKEND } from '../../../constants';
+import type { AdminLogin, User } from '../../../types';
+import { PROFESSOR_ROLE, URL_BACKEND, roles } from '../../../constants';
 
 const { Item } = Form;
 const Admin: NextPage = () => {
   const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
   const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
-  const [usersData, setUsersData] = useState<any[]>();
+  const [usersData, setUsersData] = useState<User[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>('');
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState();
+  const [selectedUser, setSelectedUser] = useState<User>();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -54,7 +55,7 @@ const Admin: NextPage = () => {
   };
 
   const searchTextLower = searchText.toLowerCase();
-  const filteredData: any[] = usersData && usersData
+  const filteredData: User[] = usersData
     .filter(
       ({
         name,
@@ -92,7 +93,7 @@ const Admin: NextPage = () => {
     }
   };
 
-  const fetchStudents = () => {
+  const fetchUsers = () => {
     axios.get(`${URL_BACKEND}/api/users/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
@@ -103,17 +104,17 @@ const Admin: NextPage = () => {
       .catch((e) => message.error(e.toString()));
   };
 
-  const handleEditClick = (row) => {
+  const handleEditClick = (row: User) => {
     setOpenEditModal(true);
     setSelectedUser(row);
   };
 
-  const handleDeleteClick = (row) => {
+  const handleDeleteClick = (row: User) => {
     axios.delete(`${URL_BACKEND}/api/users/${row.id}/`)
       .then((res) => {
         if (res && res.status === 204) {
           success();
-          fetchStudents();
+          fetchUsers();
         }
         return null;
       })
@@ -136,6 +137,10 @@ const Admin: NextPage = () => {
       push('/dashboard');
     }
   }, [userRedux]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   if (!userRedux.admin) {
     return (
@@ -266,32 +271,27 @@ const Admin: NextPage = () => {
           <TableHead>
             <TableRow>
               {/* <TableCell style={rowTitleStyle}>id</TableCell> */}
-              {/* <TableCell style={rowTitleStyle}>#</TableCell> */}
               <TableCell style={rowTitleStyle}>Identification</TableCell>
               <TableCell style={rowTitleStyle}>Name</TableCell>
               <TableCell style={rowTitleStyle}>Email</TableCell>
-              <TableCell style={rowTitleStyle}>Courses</TableCell>
+              <TableCell style={rowTitleStyle}>Status</TableCell>
               <TableCell style={rowTitleStyle}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData && map(filteredData, (student) => {
-              const foundRole = roles[Number(student.role)];
-
-              return (
-                <TableRow key={student.id}>
-                  {/* <TableCell style={centerRowStyle}>{student.id}</TableCell> */}
-                  {/* <TableCell style={centerRowStyle}>{student.student_number}</TableCell> */}
-                  <TableCell style={centerRowStyle}>{student.identification_number}</TableCell>
-                  <TableCell style={centerRowStyle}>{student.name}</TableCell>
-                  <TableCell style={centerRowStyle}>{student.email}</TableCell>
-                  <TableCell style={centerRowStyle}>
-                    <Button variant="outlined" onClick={() => handleEditClick(student)}><EditIcon /></Button>
-                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(student)}><DeleteIcon /></Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {filteredData && map(filteredData, (user) => (
+              <TableRow key={user.id}>
+                {/* <TableCell style={centerRowStyle}>{student.id}</TableCell> */}
+                <TableCell style={centerRowStyle}>{user.identification_number}</TableCell>
+                <TableCell style={centerRowStyle}>{user.name}</TableCell>
+                <TableCell style={centerRowStyle}>{user.email}</TableCell>
+                <TableCell style={centerRowStyle}>{user.status ? 'Active' : 'Inactive'}</TableCell>
+                <TableCell style={centerRowStyle}>
+                  <Button variant="outlined" onClick={() => handleEditClick(user)}><EditIcon /></Button>
+                  <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(user)}><DeleteIcon /></Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

@@ -63,3 +63,13 @@ export type AdminLogin = {
     username: string,
     password: string,
 };
+
+export type User = {
+    id: number,
+    identification_number: string,
+    name: string,
+    email: string,
+    status: string,
+    professor_id: string,
+    student_id: string,
+};
