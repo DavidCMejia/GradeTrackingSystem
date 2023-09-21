@@ -1,0 +1,176 @@
+/* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable camelcase */
+import {
+  Alert,
+  Form,
+  Input,
+  Modal,
+  Select,
+} from 'antd';
+import { FC, useEffect, useState } from 'react';
+import { map } from 'lodash';
+import axios from 'axios';
+import type { Course, Student } from '../types';
+import { URL_BACKEND, roleOptionsSelect } from '../constants';
+import { filterCourses } from '../utils';
+
+  type EditCourseModalProps = {
+      handleOpen: boolean,
+      handleCancel: () => void,
+      user: Student,
+      courseList: Course[],
+      studentsList: Student[],
+      refresh: () => void,
+  }
+
+const { Item } = Form;
+const ModalEditStudent: FC<EditCourseModalProps> = ({
+  handleOpen,
+  handleCancel,
+  courseList,
+  studentsList,
+  user,
+  refresh,
+}) => {
+  const [modalForm] = Form.useForm();
+  const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
+  const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
+  const [errorResponse, setErrorResponse] = useState <string>('');
+
+  const onFinish = async () => {
+    const values = modalForm.getFieldsValue();
+    try {
+      const res = await axios.put(`${URL_BACKEND}/api/students/${values.id}/`, values);
+
+      if (res && res.status === 200) {
+        map(values.courses_enrolled, async (courseId) => {
+          const foundCourse = courseList.find((course) => course.id === courseId);
+          if (foundCourse) {
+            await axios.patch(`${URL_BACKEND}/api/courses/${courseId}/`, {
+              students: [...foundCourse.students, res.data.id],
+            });
+          }
+        });
+        setShowSucessResponse(true);
+        setTimeout(() => {
+          setShowSucessResponse(false);
+        }, 3000);
+        refresh();
+      }
+    } catch (error: any) {
+      setErrorResponse(error.message);
+      setShowFailureResponse(true);
+      setTimeout(() => {
+        setShowFailureResponse(false);
+      }, 4000);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      const {
+        id, student_number, identification_number, name, role, email, courses_enrolled,
+      } = user;
+
+      modalForm.setFieldsValue({
+        id,
+        student_number,
+        identification_number,
+        name,
+        role,
+        email,
+        courses_enrolled,
+      });
+    }
+  }, [user]);
+
+  return (
+    <>
+      {courseList && studentsList && (
+        <Modal
+          title="Update Student"
+          open={handleOpen}
+          onCancel={handleCancel}
+          onOk={() => {
+            modalForm.validateFields()
+              .then(() => modalForm.submit())
+              .catch();
+          }}
+        >
+          {showSucessResponse && (
+          <>
+            <Alert
+              message="Student Updated"
+              description={`${user.name.toUpperCase()} successfully updated`}
+              type="success"
+              showIcon
+            />
+            <br />
+          </>
+          )}
+          {showFailureResponse && (
+          <>
+            <Alert
+              message="Student Not Updated"
+              description={`There was an error updating ${user.name.toUpperCase()}, error: ${errorResponse}`}
+              type="error"
+              showIcon
+            />
+            <br />
+          </>
+          )}
+          {!showSucessResponse && (
+          <Form
+            form={modalForm}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 12 }}
+            onFinish={onFinish}
+          >
+            <Item label="id" name="id" hidden>
+              <Input />
+            </Item>
+            <Item label="#" name="student_number" hidden>
+              <Input />
+            </Item>
+            <Item label="Identification" name="identification_number" rules={[{ required: true }]}>
+              <Input />
+            </Item>
+            <Item
+              label="Name"
+              name="name"
+            >
+              <Input />
+            </Item>
+            <Item label="Role" name="role" rules={[{ required: true }]}>
+              <Select
+                placeholder="Select role"
+                defaultValue={roleOptionsSelect[1]}
+                options={roleOptionsSelect}
+              />
+            </Item>
+            <Item label="Email" name="email" rules={[{ type: 'email', required: true }]}>
+              <Input />
+            </Item>
+            <Item label="Courses" name="courses_enrolled">
+              <Select
+                showSearch
+                mode="multiple"
+                placeholder="Select course"
+                optionFilterProp="children"
+                filterOption={filterCourses}
+                options={map(courseList, (course:Course) => ({
+                  value: course.id,
+                  label: course.course_name.toUpperCase(),
+                }))}
+              />
+            </Item>
+          </Form>
+          )}
+        </Modal>
+      )}
+    </>
+
+  );
+};
+
+export default ModalEditStudent;

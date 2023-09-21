@@ -295,6 +295,16 @@ const Admin: NextPage = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {selectedUser && usersData && (
+      <ModalEditStudent
+        handleOpen={openEditModal}
+        handleCancel={() => setOpenEditModal(false)}
+        refresh={fetchUsers}
+        user={selectedUser}
+        usersList={usersData}
+      />
+      )}
     </>
   );
 };
