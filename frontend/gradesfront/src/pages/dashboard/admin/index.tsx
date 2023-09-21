@@ -21,6 +21,7 @@ import Add from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
+import { isEmpty } from 'lodash';
 import { selectUser } from '../../../redux/selectors/mainSelectors';
 import { setUser } from '../../../redux/slices/userSlice';
 import type { AdminLogin } from '../../../types';
@@ -30,11 +31,11 @@ const { Item } = Form;
 const Admin: NextPage = () => {
   const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
   const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
-  const [studentsData, setStudentsData] = useState<any[]>();
+  const [usersData, setUsersData] = useState<any[]>();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>('');
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [selectedStudent, setSelectedStudent] = useState();
+  const [selectedUser, setSelectedUser] = useState();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -52,6 +53,17 @@ const Admin: NextPage = () => {
     });
   };
 
+  const searchTextLower = searchText.toLowerCase();
+  const filteredData: any[] = usersData && usersData
+    .filter(
+      ({
+        name,
+        identification_number,
+        email,
+      }) => name.toLowerCase().includes(searchTextLower)
+  || identification_number?.toLowerCase().includes(searchTextLower)
+  || email?.toLowerCase().includes(searchTextLower),
+    );
 
   const onSubmit = async (values: AdminLogin) => {
     if (values.username === process.env.NEXT_PUBLIC_ADMIN_USERNAME
@@ -81,10 +93,10 @@ const Admin: NextPage = () => {
   };
 
   const fetchStudents = () => {
-    axios.get(`${URL_BACKEND}/api/students/`)
+    axios.get(`${URL_BACKEND}/api/users/`)
       .then((res) => {
         if (!isEmpty(res.data)) {
-          setStudentsData(res.data);
+          setUsersData(res.data);
         }
         return null;
       })
@@ -93,11 +105,11 @@ const Admin: NextPage = () => {
 
   const handleEditClick = (row) => {
     setOpenEditModal(true);
-    setSelectedStudent(row);
+    setSelectedUser(row);
   };
 
   const handleDeleteClick = (row) => {
-    axios.delete(`${URL_BACKEND}/api/students/${row.id}/`)
+    axios.delete(`${URL_BACKEND}/api/users/${row.id}/`)
       .then((res) => {
         if (res && res.status === 204) {
           success();

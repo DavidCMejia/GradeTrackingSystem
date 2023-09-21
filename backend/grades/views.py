@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters
-from .serializer import GradeSerializer, StudentSerializer, CourseSerializer, ProfessorSerializer, ScheduleSerializer
-from .models import Grade, Student, Course, Professor, Schedule
+from .serializer import GradeSerializer, StudentSerializer, CourseSerializer, ProfessorSerializer, ScheduleSerializer, UsersSerializer
+from .models import Grade, Student, Course, Professor, Schedule, Users
 
 class GradeView(viewsets.ModelViewSet):
     serializer_class = GradeSerializer
@@ -49,3 +49,13 @@ class ScheduleView(viewsets.ModelViewSet):
         if course_id:
             return Schedule.objects.filter(course=course_id)
         return Schedule.objects.all()
+    
+class UsersView(viewsets.ModelViewSet):
+    serializer_class = UsersSerializer
+    queryset = Users.objects.all()
+
+    def get_queryset(self):
+        email = self.kwargs.get('email')
+        if email:
+            return Users.objects.filter(email=email)
+        return Users.objects.all()
