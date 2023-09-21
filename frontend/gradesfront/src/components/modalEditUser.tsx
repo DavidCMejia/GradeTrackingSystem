@@ -9,17 +9,15 @@ import {
   Select,
 } from 'antd';
 import { FC, useEffect, useState } from 'react';
-import { map } from 'lodash';
 import axios from 'axios';
-import type { Course, Student, User } from '../types';
-import { URL_BACKEND, roleOptionsSelect } from '../constants';
-import { filterCourses } from '../utils';
+import type { Professor, User } from '../types';
+import { URL_BACKEND } from '../constants';
 
   type EditUserModalProps = {
       handleOpen: boolean,
       handleCancel: () => void,
       user: User,
-      courseList?: Course[],
+      professorList: Professor[],
       usersList: User[],
       refresh: () => void,
   }
@@ -29,7 +27,7 @@ const { Item } = Form;
 const ModalEditUser: FC<EditUserModalProps> = ({
   handleOpen,
   handleCancel,
-  courseList,
+  professorList,
   usersList,
   user,
   refresh,
@@ -45,14 +43,15 @@ const ModalEditUser: FC<EditUserModalProps> = ({
       const res = await axios.put(`${URL_BACKEND}/api/users/${values.id}/`, values);
 
       if (res && res.status === 200) {
-        map(values.courses_enrolled, async (courseId) => {
-          const foundCourse = courseList.find((course) => course.id === courseId);
-          if (foundCourse) {
-            await axios.patch(`${URL_BACKEND}/api/courses/${courseId}/`, {
-              students: [...foundCourse.students, res.data.id],
-            });
-          }
-        });
+        const foundProfessor = professorList
+          .find((professor) => professor.id === values.professor_id);
+        if (foundProfessor) {
+          await axios.patch(`${URL_BACKEND}/api/professors/${values.professor_id}/`, {
+            name: values.name,
+            email: values.email,
+            identification_number: values.identification_number,
+          });
+        }
         setShowSucessResponse(true);
         setTimeout(() => {
           setShowSucessResponse(false);

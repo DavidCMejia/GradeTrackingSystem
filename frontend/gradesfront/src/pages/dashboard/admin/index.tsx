@@ -23,10 +23,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
 import { isEmpty, map } from 'lodash';
-import { selectUser } from '../../../redux/selectors/mainSelectors';
+import { selectProfessors, selectUser } from '../../../redux/selectors/mainSelectors';
 import { setUser } from '../../../redux/slices/userSlice';
 import type { AdminLogin, User } from '../../../types';
-import { PROFESSOR_ROLE, URL_BACKEND, roles } from '../../../constants';
+import { PROFESSOR_ROLE, URL_BACKEND } from '../../../constants';
 import ModalEditUser from '../../../components/modalEditUser';
 
 const { Item } = Form;
@@ -43,11 +43,12 @@ const Admin: NextPage = () => {
   const dispatch = useDispatch();
   const { push, asPath } = useRouter();
   const userRedux = useSelector(selectUser);
+  const professorList = useSelector(selectProfessors);
 
   const success = () => {
     messageApi.open({
       type: 'success',
-      content: 'Student deleted successfully',
+      content: 'User deleted successfully',
       className: 'custom-class',
       style: {
         marginTop: '20vh',
@@ -304,6 +305,7 @@ const Admin: NextPage = () => {
         refresh={fetchUsers}
         user={selectedUser}
         usersList={usersData}
+        professorList={professorList}
       />
       )}
     </>

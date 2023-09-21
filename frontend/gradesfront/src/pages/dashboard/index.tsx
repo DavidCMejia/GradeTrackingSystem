@@ -7,12 +7,14 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import TodayIcon from '@mui/icons-material/Today';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import GradingIcon from '@mui/icons-material/Grading';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 import axios from 'axios';
 
-import { isEmpty } from 'lodash';
+import { first, isEmpty } from 'lodash';
 import { message } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { selectUser } from '../../redux/selectors/mainSelectors';
 
 import { setStudents } from '../../redux/slices/studentsSlice';
@@ -23,8 +25,15 @@ import { PROFESSOR_ROLE, URL_BACKEND } from '../../constants';
 
 const Dashboard: NextPage = () => {
   const dispatch = useDispatch();
+  const [userStatus, setUserStatus] = useState<boolean>(false);
   const userRedux = useSelector(selectUser);
   const { push } = useRouter();
+
+  const currentUserStatus = () => {
+    axios.get(`${URL_BACKEND}/api/users/by_email/${userRedux.email}/`)
+      .then((res) => setUserStatus(first(res.data as any[]).status))
+      .catch();
+  };
 
   const fetchCourses = () => {
     axios.get(`${URL_BACKEND}/api/courses/`)
@@ -63,6 +72,7 @@ const Dashboard: NextPage = () => {
     fetchCourses();
     fetchStudents();
     fetchProfessors();
+    currentUserStatus();
   }, []);
 
   const paperStyles = {
@@ -141,7 +151,18 @@ const Dashboard: NextPage = () => {
           </Grid>
         </Grid>
       </Grid>
-
+      <br />
+      <br />
+      <br />
+      {!userStatus && (
+      <Grid container justifyContent="center" spacing={8} sx={{ p: 2 }}>
+        <Alert severity="warning">
+          <AlertTitle>Warning</AlertTitle>
+          Your user is not active. Most of the features are unavailable.
+          Please contact the administrator.
+        </Alert>
+      </Grid>
+      )}
     </>
   );
 };

@@ -99,8 +99,8 @@ export default function Navbar() {
 
               {userRedux.role === PROFESSOR_ROLE && (
               <MenuItem>
-                <Typography textAlign="center" onClick={() => push('/admin')}>
-                  <Link href="" passHref className={styles.linkNoStyle}>
+                <Typography textAlign="center" onClick={() => push('/dashboard/admin')}>
+                  <Link href="" as="/dashboard/admin" passHref className={styles.linkNoStyle}>
                     Admin
                   </Link>
                 </Typography>
