@@ -69,7 +69,7 @@ export type User = {
     identification_number: string,
     name: string,
     email: string,
-    status: string,
+    status: boolean,
     professor_id: string,
     student_id: string,
 };

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-boolean-value */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable camelcase */
 import {
@@ -10,25 +11,26 @@ import {
 import { FC, useEffect, useState } from 'react';
 import { map } from 'lodash';
 import axios from 'axios';
-import type { Course, Student } from '../types';
+import type { Course, Student, User } from '../types';
 import { URL_BACKEND, roleOptionsSelect } from '../constants';
 import { filterCourses } from '../utils';
 
-  type EditCourseModalProps = {
+  type EditUserModalProps = {
       handleOpen: boolean,
       handleCancel: () => void,
-      user: Student,
-      courseList: Course[],
-      studentsList: Student[],
+      user: User,
+      courseList?: Course[],
+      usersList: User[],
       refresh: () => void,
   }
 
+const { Option } = Select;
 const { Item } = Form;
-const ModalEditStudent: FC<EditCourseModalProps> = ({
+const ModalEditUser: FC<EditUserModalProps> = ({
   handleOpen,
   handleCancel,
   courseList,
-  studentsList,
+  usersList,
   user,
   refresh,
 }) => {
@@ -40,7 +42,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
   const onFinish = async () => {
     const values = modalForm.getFieldsValue();
     try {
-      const res = await axios.put(`${URL_BACKEND}/api/students/${values.id}/`, values);
+      const res = await axios.put(`${URL_BACKEND}/api/users/${values.id}/`, values);
 
       if (res && res.status === 200) {
         map(values.courses_enrolled, async (courseId) => {
@@ -69,26 +71,26 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
   useEffect(() => {
     if (user) {
       const {
-        id, student_number, identification_number, name, role, email, courses_enrolled,
+        id, identification_number, name, email, status, professor_id, student_id,
       } = user;
 
       modalForm.setFieldsValue({
         id,
-        student_number,
         identification_number,
         name,
-        role,
         email,
-        courses_enrolled,
+        status,
+        professor_id,
+        student_id,
       });
     }
   }, [user]);
 
   return (
     <>
-      {courseList && studentsList && (
+      {usersList && (
         <Modal
-          title="Update Student"
+          title="Update User"
           open={handleOpen}
           onCancel={handleCancel}
           onOk={() => {
@@ -100,7 +102,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           {showSucessResponse && (
           <>
             <Alert
-              message="Student Updated"
+              message="User Updated"
               description={`${user.name.toUpperCase()} successfully updated`}
               type="success"
               showIcon
@@ -111,7 +113,7 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
           {showFailureResponse && (
           <>
             <Alert
-              message="Student Not Updated"
+              message="User Not Updated"
               description={`There was an error updating ${user.name.toUpperCase()}, error: ${errorResponse}`}
               type="error"
               showIcon
@@ -129,40 +131,23 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
             <Item label="id" name="id" hidden>
               <Input />
             </Item>
-            <Item label="#" name="student_number" hidden>
-              <Input />
-            </Item>
             <Item label="Identification" name="identification_number" rules={[{ required: true }]}>
               <Input />
             </Item>
-            <Item
-              label="Name"
-              name="name"
-            >
+            <Item label="Name" name="name">
               <Input />
-            </Item>
-            <Item label="Role" name="role" rules={[{ required: true }]}>
-              <Select
-                placeholder="Select role"
-                defaultValue={roleOptionsSelect[1]}
-                options={roleOptionsSelect}
-              />
             </Item>
             <Item label="Email" name="email" rules={[{ type: 'email', required: true }]}>
               <Input />
             </Item>
-            <Item label="Courses" name="courses_enrolled">
-              <Select
-                showSearch
-                mode="multiple"
-                placeholder="Select course"
-                optionFilterProp="children"
-                filterOption={filterCourses}
-                options={map(courseList, (course:Course) => ({
-                  value: course.id,
-                  label: course.course_name.toUpperCase(),
-                }))}
-              />
+            <Item label="Status" name="status">
+              <Select>
+                <Option value={true}>Active</Option>
+                <Option value={false}>Inactive</Option>
+              </Select>
+            </Item>
+            <Item label="Professor" name="professor_id" hidden>
+              <Input />
             </Item>
           </Form>
           )}
@@ -173,4 +158,4 @@ const ModalEditStudent: FC<EditCourseModalProps> = ({
   );
 };
 
-export default ModalEditStudent;
+export default ModalEditUser;

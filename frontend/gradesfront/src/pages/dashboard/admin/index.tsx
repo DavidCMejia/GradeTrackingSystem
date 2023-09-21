@@ -27,6 +27,7 @@ import { selectUser } from '../../../redux/selectors/mainSelectors';
 import { setUser } from '../../../redux/slices/userSlice';
 import type { AdminLogin, User } from '../../../types';
 import { PROFESSOR_ROLE, URL_BACKEND, roles } from '../../../constants';
+import ModalEditUser from '../../../components/modalEditUser';
 
 const { Item } = Form;
 const Admin: NextPage = () => {
@@ -297,7 +298,7 @@ const Admin: NextPage = () => {
       </TableContainer>
 
       {selectedUser && usersData && (
-      <ModalEditStudent
+      <ModalEditUser
         handleOpen={openEditModal}
         handleCancel={() => setOpenEditModal(false)}
         refresh={fetchUsers}
