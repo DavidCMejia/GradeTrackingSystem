@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 
 import axios from 'axios';
 
-import { first, isEmpty } from 'lodash';
+import { first, isEmpty, pick } from 'lodash';
 
 import { useDispatch } from 'react-redux';
 import type { Professor, Student } from '../../types';
@@ -45,8 +45,25 @@ const VerifyInfo: NextPage = () => {
     });
   };
 
-  const handleSubmit = async (values: Professor) => {
+  const handleUser = async (values: Professor | Student) => {
+    const commonProperties = pick(values, ['identification_number', 'name', 'email']);
+    const userDataWithRole = {
+      ...commonProperties,
+      [`${userRole.slice(0, -1)}_id`]: userData?.id,
+    };
+    if (!dataCheckedAlready) {
+      await axios.get(`${URL_BACKEND}/api/users/by_email/${userData?.email}/`)
+        .then((res) => axios.put(`${URL_BACKEND}/api/users/${res.data[0].id}/`, userDataWithRole))
+        .catch();
+    } else {
+      await axios.post(`${URL_BACKEND}/api/users/`, userDataWithRole)
+        .catch();
+    }
+  };
+
+  const handleSubmit = async (values: Professor | Student) => {
     try {
+      await handleUser(values);
       if (!dataCheckedAlready && userData && userRole) {
         const res = await axios.put(`${URL_BACKEND}/api/${userRole}/${userData?.id}/`, values);
         if (res && res.status === 200) success();
