@@ -34,8 +34,6 @@ export default function Navbar() {
   const { push } = useRouter();
   const [handleOpenNavMenu, setHandleOpenNavMenu] = useState<null | HTMLElement>(null);
   const [handleOpenUserMenu, setHandleOpenUserMenu] = useState<null | HTMLElement>(null);
-  const pages = ['Dashboard'];
-  const pageLinks = ['/dashboard'];
 
   const userRedux = useSelector(selectUser);
 
@@ -96,7 +94,13 @@ export default function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-
+              <MenuItem onClick={() => setHandleOpenNavMenu(null)}>
+                <Typography textAlign="center">
+                  <Link href="" as="/dashboard" passHref className={styles.linkNoStyle}>
+                    Dashboard
+                  </Link>
+                </Typography>
+              </MenuItem>
               {userRedux.role === PROFESSOR_ROLE && (
               <MenuItem>
                 <Typography textAlign="center" onClick={() => push('/dashboard/admin')}>
@@ -107,15 +111,6 @@ export default function Navbar() {
                 </Typography>
               </MenuItem>
               )}
-              {user && pages.map((page, index) => (
-                <MenuItem key={page} onClick={() => setHandleOpenNavMenu(null)}>
-                  <Typography textAlign="center">
-                    <Link href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
-                      {page}
-                    </Link>
-                  </Typography>
-                </MenuItem>
-              ))}
             </Menu>
           </Box>
           <SchoolIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -138,26 +133,23 @@ export default function Navbar() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Button
+              onClick={() => {
+                setHandleOpenNavMenu(null);
+                push('/dashboard');
+              }}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Dashboard
+            </Button>
             {userRedux.role === PROFESSOR_ROLE && (
-            <Link href="" passHref className={styles.linkNoStyle}>
               <Button
                 onClick={() => push('/dashboard/admin')}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 Admin
               </Button>
-            </Link>
             )}
-            {user && pages.map((page, index) => (
-              <Link key={page} href="" as={pageLinks[index]} passHref className={styles.linkNoStyle}>
-                <Button
-                  onClick={() => setHandleOpenNavMenu(null)}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  {page}
-                </Button>
-              </Link>
-            ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
