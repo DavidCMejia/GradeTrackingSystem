@@ -33,15 +33,20 @@ const { Item } = Form;
 const Admin: NextPage = () => {
   const [showSucessResponse, setShowSucessResponse] = useState <boolean>(false);
   const [showFailureResponse, setShowFailureResponse] = useState <boolean>(false);
+
   const [usersData, setUsersData] = useState<User[]>([]);
+
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [searchText, setSearchText] = useState<string>('');
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState<string>('');
   const [selectedUser, setSelectedUser] = useState<User>();
+
   const [messageApi, contextHolder] = message.useMessage();
+
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { push, asPath } = useRouter();
+
   const userRedux = useSelector(selectUser);
   const professorList = useSelector(selectProfessors);
 
