@@ -104,7 +104,6 @@ export default function Navbar() {
               {userRedux.role === PROFESSOR_ROLE && (
               <MenuItem>
                 <Typography textAlign="center" onClick={() => push('/dashboard/admin')}>
-                  {/* TODO: Cuando se da click on admin desde dashboard no navega */}
                   <Link href="" as="/dashboard/admin" passHref className={styles.linkNoStyle}>
                     Admin
                   </Link>
