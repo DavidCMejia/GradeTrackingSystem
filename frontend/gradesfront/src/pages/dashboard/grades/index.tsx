@@ -129,7 +129,7 @@ const Grades: NextPage = () => {
     fetchGrades();
   }, []);
 
-  if (isEmpty(gradesData)) {
+  if (isEmpty(gradesData) && userRedux.role === STUDENT_ROLE) {
     return (
       <Typography variant="h3" align="center" gutterBottom>
         <ErrorIcon fontSize="large" />
@@ -172,52 +172,59 @@ const Grades: NextPage = () => {
         />
       </Typography>
       {contextHolder}
-      <TableContainer
-        component={Paper}
-        style={{
-          border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '650px',
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              {/* <TableCell style={rowTitleStyle}>id</TableCell> */}
-              <TableCell style={rowTitleStyle}>Course</TableCell>
-              <TableCell style={rowTitleStyle}>Student</TableCell>
-              <TableCell style={rowTitleStyle}>Grade</TableCell>
-              {userRedux.role === PROFESSOR_ROLE && (
-              <TableCell style={rowTitleStyle}>Actions</TableCell>)}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredData && map(filteredData, (grade) => {
-              const foundStudent = studentsList
+      {isEmpty(gradesData) ? (
+        <Typography variant="h3" align="center" gutterBottom>
+          <ErrorIcon fontSize="large" />
+          There are no grades yet please create one to continue.
+        </Typography>
+      ) : (
+        <TableContainer
+          component={Paper}
+          style={{
+            border: '1px solid #ccc', margin: 'auto', maxWidth: '100px', minWidth: '650px',
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                {/* <TableCell style={rowTitleStyle}>id</TableCell> */}
+                <TableCell style={rowTitleStyle}>Course</TableCell>
+                <TableCell style={rowTitleStyle}>Student</TableCell>
+                <TableCell style={rowTitleStyle}>Grade</TableCell>
+                {userRedux.role === PROFESSOR_ROLE && (
+                <TableCell style={rowTitleStyle}>Actions</TableCell>)}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredData && map(filteredData, (grade) => {
+                const foundStudent = studentsList
               && find(studentsList, { id: grade.student });
-              const foundCourse = courseList
+                const foundCourse = courseList
               && find(courseList, { id: grade.course });
-              const gradeColor = getGradeColor(grade.grade);
-              return (
-                <TableRow key={grade.id}>
-                  {/* <TableCell style={centerRowStyle}>{grade.id}</TableCell> */}
-                  <TableCell style={centerRowStyle}>{get(foundCourse, 'course_name')?.toUpperCase()}</TableCell>
-                  <TableCell style={centerRowStyle}>{get(foundStudent, 'name')}</TableCell>
-                  <TableCell style={centerRowStyle}>
-                    <span style={{ color: gradeColor }}>
-                      {grade.grade}
-                    </span>
-                  </TableCell>
-                  {userRedux.role === PROFESSOR_ROLE && (
-                  <TableCell style={centerRowStyle}>
-                    <Button variant="outlined" onClick={() => handleEditClick(grade)}><EditIcon /></Button>
-                    <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(grade)}><DeleteIcon /></Button>
-                  </TableCell>
-                  )}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                const gradeColor = getGradeColor(grade.grade);
+                return (
+                  <TableRow key={grade.id}>
+                    {/* <TableCell style={centerRowStyle}>{grade.id}</TableCell> */}
+                    <TableCell style={centerRowStyle}>{get(foundCourse, 'course_name')?.toUpperCase()}</TableCell>
+                    <TableCell style={centerRowStyle}>{get(foundStudent, 'name')}</TableCell>
+                    <TableCell style={centerRowStyle}>
+                      <span style={{ color: gradeColor }}>
+                        {grade.grade}
+                      </span>
+                    </TableCell>
+                    {userRedux.role === PROFESSOR_ROLE && (
+                    <TableCell style={centerRowStyle}>
+                      <Button variant="outlined" onClick={() => handleEditClick(grade)}><EditIcon /></Button>
+                      <Button color="error" style={{ marginLeft: '8px' }} variant="outlined" onClick={() => handleDeleteClick(grade)}><DeleteIcon /></Button>
+                    </TableCell>
+                    )}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       {selectedGrade && studentsList && (
       <ModalEditGrade

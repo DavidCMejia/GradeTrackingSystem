@@ -10,7 +10,6 @@ import {
   Paper,
   Button,
   Typography,
-  CircularProgress,
   TextField,
 } from '@mui/material';
 
@@ -126,8 +125,11 @@ const Courses: NextPage = () => {
   if (isEmpty(studentsData)) {
     return (
       <Typography variant="h3" align="center" gutterBottom>
-        <CircularProgress />
-        Loading...
+        There are no students created. Click to create a student
+        <br />
+        {userRedux.role === PROFESSOR_ROLE && (
+        <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
+        )}
       </Typography>
     );
   }

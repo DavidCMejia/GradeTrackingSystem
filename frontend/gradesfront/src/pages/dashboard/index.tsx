@@ -31,7 +31,7 @@ const Dashboard: NextPage = () => {
 
   const currentUserStatus = () => {
     axios.get(`${URL_BACKEND}/api/users/by_email/${userRedux.email}/`)
-      .then((res) => setUserStatus(first(res.data as any[]).status))
+      .then((res) => setUserStatus(first(res.data as any[])?.status))
       .catch();
   };
 

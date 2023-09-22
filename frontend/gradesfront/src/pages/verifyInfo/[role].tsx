@@ -47,16 +47,16 @@ const VerifyInfo: NextPage = () => {
 
   const handleUser = async (values: Professor | Student) => {
     const commonProperties = pick(values, ['identification_number', 'name', 'email']);
+    const exists = await axios.get(`${URL_BACKEND}/api/users/by_email/${values.email}/`);
     const userDataWithRole = {
       ...commonProperties,
       [`${userRole.slice(0, -1)}_id`]: userData?.id,
     };
-    if (!dataCheckedAlready) {
-      await axios.get(`${URL_BACKEND}/api/users/by_email/${userData?.email}/`)
-        .then((res) => axios.put(`${URL_BACKEND}/api/users/${res.data[0].id}/`, userDataWithRole))
-        .catch();
+    if (!exists) {
+      await axios.post(`${URL_BACKEND}/api/users/`, userDataWithRole);
     } else {
-      await axios.post(`${URL_BACKEND}/api/users/`, userDataWithRole)
+      await axios.get(`${URL_BACKEND}/api/users/by_email/${values.email}/`)
+        .then((res) => axios.put(`${URL_BACKEND}/api/users/${res.data[0].id}/`, userDataWithRole))
         .catch();
     }
   };
