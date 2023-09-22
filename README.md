@@ -16,10 +16,11 @@ Navigate to the backend directory:
 cd backend
 
 1. docker compose up -d 
-2. Para linux source venv/bin/activate or windows .\venv\Scripts\Activate
-3. pip install -r requirements.txt
-4. python manage.py runserver
+2. For linux source venv/bin/activate or for windows .\venv\Scripts\Activate
+3. if step 2 doesnt work, delete venv folder and create a new venv "python -m venv venv" then try again step 2
+4. pip install -r requirements.txt
 5. python manage.py migrate
+6. python manage.py runserver
 
 This will launch the backend server, which you can access in your web browser at http://localhost:8000.
 
