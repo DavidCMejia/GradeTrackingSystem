@@ -11,15 +11,15 @@ Install Python: Download and install the latest version of Python from python.or
 1. Make sure the environment variables for Django are set up correctly. You can do this by following the steps in the Django documentation. File .env
 2. Make sure the environtment variables for Next.js are set up correctly. You can do this by following the steps in the Next.js documentation. File .env.local
 
-
 BACKEND SETUP
 Navigate to the backend directory:
 cd backend
 
 1. docker compose up -d 
-2. source venv/bin/activate
+2. Para linux source venv/bin/activate or windows .\venv\Scripts\Activate
 3. pip install -r requirements.txt
 4. python manage.py runserver
+5. python manage.py migrate
 
 This will launch the backend server, which you can access in your web browser at http://localhost:8000.
 
@@ -29,11 +29,9 @@ Navigate to the frontend directory:
 cd frontend
 cd gradesfront
 
-Install the required Node.js packages:
-yarn
+1. Install the required Node.js packages: yarn
+2. Start the Next.js development server: yarn dev.
 
-Start the Next.js development server:
-yarn dev.
 This will launch the frontend application, which you can access in your web browser at http://localhost:3000.
 
 Features
