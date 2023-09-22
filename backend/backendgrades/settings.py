@@ -85,16 +85,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }
 }
-
-# Como la BD esta corriendose en docker pero el proyecto esta corriendo en el localhost
-# se debe agregar la IP fija del host para que el proyecto pueda acceder a la BD
-# y para saber la IP de la bd del docker el comando es
-# sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' backend-db-1
-# para evitar eso se asigno una ip fija de 192.168.112.2 con 
-# networks: mynetwork: ipv4_address: 192.168.112.2 en docker-compose.yml
-# se da principalmente porque se esta usando la version binary psycopg2-binary
-#si fuera la version FULL todo estaría bien.
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

@@ -1,19 +1,13 @@
 version: '3'
 
-networks:
-  mynetwork:
-    ipam:
-      config:
-        - subnet: 192.168.112.2/16 
 services:
   db:
-    image: postgres:13   
+    image: postgres:13
+    ports:
+      - "5434:5432"   
     environment:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: mydatabaseuser
       POSTGRES_PASSWORD: mypassword
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-    networks:
-      mynetwork:
-        ipv4_address: 192.168.112.2
