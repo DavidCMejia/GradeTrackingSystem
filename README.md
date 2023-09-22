@@ -66,3 +66,10 @@ Permissions/roles:
 | Admin Tasks         |         -           |         -           |         X           |
 | Delete, Edit Accounts |       -           |         -           |         X           |
 
+ORDER:
+Here are a few suggestions to help you get started:
+1. Create a student
+2. Create a professor
+3. When the student is created, create a course and enroll the student to the course (You can assign multiple students to a course but only one professor)
+4. Create a grade for the student
+5. Create a Schedule
