@@ -157,11 +157,14 @@ const Courses: NextPage = () => {
   if (isEmpty(coursesData)) {
     return (
       <Typography variant="h3" align="center" gutterBottom>
-        There are no courses created. Click to create a course
-        <br />
-        {userRedux.role === PROFESSOR_ROLE && (
-        <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
-        )}
+        {userRedux.role === PROFESSOR_ROLE ? (
+          <>
+            There are no courses created. Click to create a course
+            <br />
+            <Button variant="outlined" color="success" onClick={() => push(`${asPath}/create`)}><Add /></Button>
+          </>
+        ) : (
+          <span>There are no courses created. Please contact the administrator.</span>)}
       </Typography>
     );
   }
