@@ -66,8 +66,8 @@ Permissions/roles:
 
 ORDER:
 Here are a few suggestions to help you get started:
-1. Create a student
-2. Create a professor
+1. Verify your info, then use Professor Role (when you verify yourself as a professor you will create a new professor in the database)
+2. Create a student
 3. When the student is created, create a course and enroll the student to the course (You can assign multiple students to a course but only one professor)
 4. Create a grade for the student
 5. Create a Schedule
