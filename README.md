@@ -8,8 +8,8 @@ Before you start the backend server, make sure you have Docker Compose installed
 
 Install Python: Download and install the latest version of Python from python.org.
 
-1. Make sure the environment variables for Django are set up correctly. You can do this by following the steps in the Django documentation. File .env
-2. Make sure the environtment variables for Next.js are set up correctly. You can do this by following the steps in the Next.js documentation. File .env.local
+1. Make sure the environment variables for Django are set up correctly. You can do this by following the steps in the Django documentation. File .env (must be in /backend)
+2. Make sure the environtment variables for Next.js are set up correctly. You can do this by following the steps in the Next.js documentation. File .env.local (must be in /gradesfront)
 
 BACKEND SETUP
 Navigate to the backend directory:
@@ -72,3 +72,5 @@ Here are a few suggestions to help you get started:
 3. When the student is created, create a course and enroll the student to the course (You can assign multiple students to a course but only one professor)
 4. Create a grade for the student
 5. Create a Schedule
+
+Note: If you want admin access, select Professor Role then click access and user "admin" as a user and password.
