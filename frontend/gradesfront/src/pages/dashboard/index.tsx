@@ -72,7 +72,7 @@ const Dashboard: NextPage = () => {
     fetchCourses();
     fetchStudents();
     fetchProfessors();
-    currentUserStatus();
+    if (!isEmpty(userRedux.name)) currentUserStatus();
   }, []);
 
   const paperStyles = {

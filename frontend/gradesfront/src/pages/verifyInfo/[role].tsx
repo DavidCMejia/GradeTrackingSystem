@@ -52,7 +52,7 @@ const VerifyInfo: NextPage = () => {
       ...commonProperties,
       [`${userRole.slice(0, -1)}_id`]: userData?.id,
     };
-    if (!exists) {
+    if (isEmpty(exists.data)) {
       await axios.post(`${URL_BACKEND}/api/users/`, userDataWithRole);
     } else {
       await axios.get(`${URL_BACKEND}/api/users/by_email/${values.email}/`)
