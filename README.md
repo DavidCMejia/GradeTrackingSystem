@@ -73,4 +73,4 @@ Here are a few suggestions to help you get started:
 4. Create a grade for the student
 5. Create a Schedule
 
-Note: If you want admin access, select Professor Role then click access and user "admin" as a user and password.
+Note: If you want admin access, select Professor Role then click access and type "admin" as a user and password.
